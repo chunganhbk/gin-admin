@@ -1,33 +1,16 @@
 package schema
 
 import (
-	"context"
 	"time"
-
-	"github.com/LyricTian/gin-admin/v6/internal/app/config"
-	"github.com/LyricTian/gin-admin/v6/pkg/util"
+	"github.com/chunganhbk/gin-go/pkg/util"
 )
 
-// GetRootUser 获取root用户
-func GetRootUser() *User {
-	user := config.C.Root
-	return &User{
-		ID:       user.UserName,
-		UserName: user.UserName,
-		RealName: user.RealName,
-		Password: util.MD5HashString(user.Password),
-	}
-}
 
-// CheckIsRootUser 检查是否是root用户
-func CheckIsRootUser(ctx context.Context, userID string) bool {
-	return GetRootUser().ID == userID
-}
 
 // User 用户对象
 type User struct {
-	ID        string    `json:"id"`                                    // 唯一标识
-	UserName  string    `json:"user_name" binding:"required"`          // 用户名
+	ID        string    `json:"id"`
+	UserName  string    `json:"user_name" binding:"required"`
 	RealName  string    `json:"real_name" binding:"required"`          // 真实姓名
 	Password  string    `json:"password"`                              // 密码
 	Phone     string    `json:"phone"`                                 // 手机号
@@ -79,7 +62,7 @@ func (a UserQueryResult) ToShowResult(mUserRoles map[string]UserRoles, mRoles ma
 // Users 用户对象列表
 type Users []*User
 
-// ToIDs 转换为唯一标识列表
+// ToIDs
 func (a Users) ToIDs() []string {
 	idList := make([]string, len(a))
 	for i, item := range a {

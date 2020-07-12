@@ -97,7 +97,7 @@ func (a RoleMenus) ToMap() map[string]*RoleMenu {
 	return m
 }
 
-// ToRoleIDMap 转换为角色ID映射
+// ToRoleIDMap
 func (a RoleMenus) ToRoleIDMap() map[string]RoleMenus {
 	m := make(map[string]RoleMenus)
 	for _, item := range a {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/chunganhbk/gin-go/pkg/jwt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,17 +12,14 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/LyricTian/captcha"
-	"github.com/LyricTian/captcha/store"
-	"github.com/LyricTian/gin-admin/v6/internal/app/config"
-	"github.com/LyricTian/gin-admin/v6/internal/app/injector"
-	"github.com/LyricTian/gin-admin/v6/internal/app/iutil"
-	"github.com/LyricTian/gin-admin/v6/pkg/logger"
-	"github.com/go-redis/redis"
+	"github.com/chunganhbk/gin-go/internal/app/config"
+	"github.com/chunganhbk/gin-go/internal/app/injector"
+	"github.com/chunganhbk/gin-go/internal/app/iutil"
+	"github.com/chunganhbk/gin-go/pkg/logger"
 	"github.com/google/gops/agent"
 
 	// 引入swagger
-	_ "github.com/LyricTian/gin-admin/v6/internal/app/swagger"
+	_ "github.com/LyricTian/server/v6/internal/app/swagger"
 )
 
 type options struct {
@@ -103,8 +101,7 @@ func Init(ctx context.Context, opts ...Option) (func(), error) {
 	// 初始化服务运行监控
 	InitMonitor(ctx)
 
-	// 初始化图形验证码
-	InitCaptcha()
+
 
 	// 初始化依赖注入器
 	injector, injectorCleanFunc, err := injector.BuildInjector()
@@ -130,18 +127,7 @@ func Init(ctx context.Context, opts ...Option) (func(), error) {
 	}, nil
 }
 
-// InitCaptcha 初始化图形验证码
-func InitCaptcha() {
-	cfg := config.C.Captcha
-	if cfg.Store == "redis" {
-		rc := config.C.Redis
-		captcha.SetCustomStore(store.NewRedisStore(&redis.Options{
-			Addr:     rc.Addr,
-			Password: rc.Password,
-			DB:       cfg.RedisDB,
-		}, captcha.Expiration, logger.StandardLogger(), cfg.RedisPrefix))
-	}
-}
+
 
 // InitMonitor 初始化服务监控
 func InitMonitor(ctx context.Context) {
@@ -219,4 +205,13 @@ EXIT:
 	time.Sleep(time.Second)
 	os.Exit(int(atomic.LoadInt32(&state)))
 	return nil
+}
+func InitAuth(cfg *config.Config) (jwt.IJWTAuth, error) {
+	jwtConfig := cfg.JWTAuth
+	var opts []jwt.Option
+
+	opts = append(opts, jwt.SetExpired(jwtConfig.Expired))
+	opts = append(opts, jwt.SetSigningKey([]byte(jwtConfig.SigningKey)))
+	return jwt.NewJWTAuth(opts...), nil
+
 }

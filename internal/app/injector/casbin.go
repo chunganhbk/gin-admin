@@ -3,7 +3,7 @@ package injector
 import (
 	"time"
 
-	"github.com/LyricTian/gin-admin/v6/internal/app/config"
+	"github.com/chunganhbk/gin-go/internal/app/config"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/persist"
 )

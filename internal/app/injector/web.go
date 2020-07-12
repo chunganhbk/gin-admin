@@ -1,9 +1,9 @@
 package injector
 
 import (
-	"github.com/LyricTian/gin-admin/v6/internal/app/config"
-	"github.com/LyricTian/gin-admin/v6/internal/app/middleware"
-	"github.com/LyricTian/gin-admin/v6/internal/app/router"
+	"github.com/chunganhbk/gin-go/internal/app/config"
+	"github.com/chunganhbk/gin-go/internal/app/middleware"
+	"github.com/chunganhbk/gin-go/internal/app/router"
 	"github.com/LyricTian/gzip"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -17,20 +17,10 @@ func InitGinEngine(r router.IRouter) *gin.Engine {
 	app := gin.New()
 	app.NoMethod(middleware.NoMethodHandler())
 	app.NoRoute(middleware.NoRouteHandler())
-
 	prefixes := r.Prefixes()
-
-	// Trace ID
-	app.Use(middleware.TraceMiddleware(middleware.AllowPathPrefixNoSkipper(prefixes...)))
-
-	// Copy body
-	app.Use(middleware.CopyBodyMiddleware(middleware.AllowPathPrefixNoSkipper(prefixes...)))
-
 	// Access logger
 	app.Use(middleware.LoggerMiddleware(middleware.AllowPathPrefixNoSkipper(prefixes...)))
 
-	// Recover
-	app.Use(middleware.RecoveryMiddleware())
 
 	// CORS
 	if config.C.CORS.Enable {

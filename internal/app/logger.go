@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/LyricTian/gin-admin/v6/internal/app/config"
-	"github.com/LyricTian/gin-admin/v6/pkg/logger"
-	loggerhook "github.com/LyricTian/gin-admin/v6/pkg/logger/hook"
-	loggergormhook "github.com/LyricTian/gin-admin/v6/pkg/logger/hook/gorm"
-	loggermongohook "github.com/LyricTian/gin-admin/v6/pkg/logger/hook/mongo"
+	"github.com/chunganhbk/gin-go/internal/app/config"
+	"github.com/chunganhbk/gin-go/pkg/logger"
+	loggerhook "github.com/LyricTian/server/v6/pkg/logger/hook"
+	loggergormhook "github.com/LyricTian/server/v6/pkg/logger/hook/gorm"
+	loggermongohook "github.com/LyricTian/server/v6/pkg/logger/hook/mongo"
 	"github.com/sirupsen/logrus"
 )
 

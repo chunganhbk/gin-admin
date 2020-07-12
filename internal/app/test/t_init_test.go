@@ -9,14 +9,14 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/LyricTian/gin-admin/v6/internal/app/config"
-	"github.com/LyricTian/gin-admin/v6/internal/app/injector"
+	"github.com/chunganhbk/gin-go/internal/app/config"
+	"github.com/chunganhbk/gin-go/internal/app/injector"
 	"github.com/gin-gonic/gin"
 )
 
 const (
 	configFile = "../../../configs/config.toml"
-	modelFile  = "../../../configs/model.conf"
+	modelFile  = "../../../configs/models.conf"
 	apiPrefix  = "/api/"
 )
 

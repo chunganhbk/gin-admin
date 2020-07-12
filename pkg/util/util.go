@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-// StructMapToStruct 结构体映射
+// Struct Map To other Struct
 func StructMapToStruct(s, ts interface{}) error {
 	return copier.Copy(ts, s)
 }

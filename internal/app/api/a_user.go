@@ -3,10 +3,10 @@ package api
 import (
 	"strings"
 
-	"github.com/LyricTian/gin-admin/v6/internal/app/bll"
-	"github.com/LyricTian/gin-admin/v6/internal/app/ginplus"
-	"github.com/LyricTian/gin-admin/v6/internal/app/schema"
-	"github.com/LyricTian/gin-admin/v6/pkg/errors"
+	"github.com/chunganhbk/gin-go/internal/app/services"
+	"github.com/chunganhbk/gin-go/internal/app/ginplus"
+	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/pkg/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 )
@@ -16,7 +16,7 @@ var UserSet = wire.NewSet(wire.Struct(new(User), "*"))
 
 // User 用户管理
 type User struct {
-	UserBll bll.IUser
+	UserBll services.IUser
 }
 
 // Query 查询数据

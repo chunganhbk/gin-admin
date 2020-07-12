@@ -1,9 +1,9 @@
 package api
 
 import (
-	"github.com/LyricTian/gin-admin/v6/internal/app/bll"
-	"github.com/LyricTian/gin-admin/v6/internal/app/ginplus"
-	"github.com/LyricTian/gin-admin/v6/internal/app/schema"
+	"github.com/chunganhbk/gin-go/internal/app/services"
+	"github.com/chunganhbk/gin-go/internal/app/ginplus"
+	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 )
@@ -13,7 +13,7 @@ var RoleSet = wire.NewSet(wire.Struct(new(Role), "*"))
 
 // Role 角色管理
 type Role struct {
-	RoleBll bll.IRole
+	RoleBll services.IRole
 }
 
 // Query 查询数据

@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/LyricTian/gin-admin/v6/internal/app/middleware"
+	"github.com/chunganhbk/gin-go/internal/app/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,42 +14,30 @@ func (a *Router) RegisterAPI(app *gin.Engine) {
 	))
 
 	g.Use(middleware.CasbinMiddleware(a.CasbinEnforcer,
-		middleware.AllowPathPrefixSkipper("/api/v1/pub"),
+		middleware.AllowPathPrefixSkipper("/api/v1/auth"),
 	))
 
-	g.Use(middleware.RateLimiterMiddleware())
+
 
 	v1 := g.Group("/v1")
 	{
-		pub := v1.Group("/pub")
+		auth := v1.Group("/auth")
 		{
-			gLogin := pub.Group("login")
-			{
-				gLogin.GET("captchaid", a.LoginAPI.GetCaptcha)
-				gLogin.GET("captcha", a.LoginAPI.ResCaptcha)
-				gLogin.POST("", a.LoginAPI.Login)
-				gLogin.POST("exit", a.LoginAPI.Logout)
-			}
+			auth.POST("/login", a.LoginAPI.Login)
+			auth.POST("/login", a.LoginAPI.Register)
 
-			gCurrent := pub.Group("current")
-			{
-				gCurrent.PUT("password", a.LoginAPI.UpdatePassword)
-				gCurrent.GET("user", a.LoginAPI.GetUserInfo)
-				gCurrent.GET("menutree", a.LoginAPI.QueryUserMenuTree)
-			}
-			pub.POST("/refresh-token", a.LoginAPI.RefreshToken)
+
+
+		}
+		gCurrent := v1.Group("current")
+		{
+			gCurrent.PUT("password", a.LoginAPI.UpdatePassword)
+			gCurrent.GET("user", a.LoginAPI.GetUserInfo)
+			gCurrent.GET("menutree", a.LoginAPI.QueryUserMenuTree)
+			gCurrent.POST("/refresh-token", a.LoginAPI.RefreshToken)
 		}
 
-		gDemo := v1.Group("demos")
-		{
-			gDemo.GET("", a.DemoAPI.Query)
-			gDemo.GET(":id", a.DemoAPI.Get)
-			gDemo.POST("", a.DemoAPI.Create)
-			gDemo.PUT(":id", a.DemoAPI.Update)
-			gDemo.DELETE(":id", a.DemoAPI.Delete)
-			gDemo.PATCH(":id/enable", a.DemoAPI.Enable)
-			gDemo.PATCH(":id/disable", a.DemoAPI.Disable)
-		}
+
 
 		gMenu := v1.Group("menus")
 		{

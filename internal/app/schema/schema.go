@@ -69,9 +69,9 @@ func (a PaginationParam) GetPageSize() uint {
 type OrderDirection int
 
 const (
-	// OrderByASC 升序排序
+	// Order By ASC
 	OrderByASC OrderDirection = 1
-	// OrderByDESC 降序排序
+	// Order By DESC
 	OrderByDESC OrderDirection = 2
 )
 

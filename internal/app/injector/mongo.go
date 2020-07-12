@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/LyricTian/gin-admin/v6/internal/app/config"
-	imongo "github.com/LyricTian/gin-admin/v6/internal/app/model/impl/mongo"
+	"github.com/chunganhbk/gin-go/internal/app/config"
+	imongo "github.com/LyricTian/server/v6/internal/app/models/impl/mongo"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

@@ -1,9 +1,9 @@
 package api
 
 import (
-	"github.com/LyricTian/gin-admin/v6/internal/app/bll"
-	"github.com/LyricTian/gin-admin/v6/internal/app/ginplus"
-	"github.com/LyricTian/gin-admin/v6/internal/app/schema"
+	"github.com/chunganhbk/gin-go/internal/app/services"
+	"github.com/chunganhbk/gin-go/internal/app/ginplus"
+	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 )
@@ -13,7 +13,7 @@ var MenuSet = wire.NewSet(wire.Struct(new(Menu), "*"))
 
 // Menu 菜单管理
 type Menu struct {
-	MenuBll bll.IMenu
+	MenuBll services.IMenu
 }
 
 // Query 查询数据

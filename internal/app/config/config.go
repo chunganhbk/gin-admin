@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/LyricTian/gin-admin/v6/pkg/util"
+	"github.com/chunganhbk/gin-go/pkg/util"
 	"github.com/koding/multiconfig"
 )
 
@@ -150,23 +150,11 @@ type LogMongoHook struct {
 	Collection string
 }
 
-// Root root用户
-type Root struct {
-	UserName string
-	Password string
-	RealName string
-}
 
 // JWTAuth 用户认证
 type JWTAuth struct {
-	Enable        bool
-	SigningMethod string
 	SigningKey    string
 	Expired       int
-	Store         string
-	FilePath      string
-	RedisDB       int
-	RedisPrefix   string
 }
 
 // HTTP http配置参数
@@ -186,24 +174,9 @@ type Monitor struct {
 	ConfigDir string
 }
 
-// Captcha 图形验证码配置参数
-type Captcha struct {
-	Store       string
-	Length      int
-	Width       int
-	Height      int
-	RedisDB     int
-	RedisPrefix string
-}
 
-// RateLimiter 请求频率限制配置参数
-type RateLimiter struct {
-	Enable  bool
-	Count   int64
-	RedisDB int
-}
 
-// CORS 跨域请求配置参数
+// CORS
 type CORS struct {
 	Enable           bool
 	AllowOrigins     []string
@@ -220,13 +193,9 @@ type GZIP struct {
 	ExcludedPaths      []string
 }
 
-// Redis redis配置参数
-type Redis struct {
-	Addr     string
-	Password string
-}
 
-// Gorm gorm配置参数
+
+// Gorm gorm
 type Gorm struct {
 	Debug             bool
 	DBType            string
@@ -237,7 +206,7 @@ type Gorm struct {
 	EnableAutoMigrate bool
 }
 
-// MySQL mysql配置参数
+// MySQL mysql
 type MySQL struct {
 	Host       string
 	Port       int
@@ -247,13 +216,13 @@ type MySQL struct {
 	Parameters string
 }
 
-// DSN 数据库连接串
+// DSN connect mysql
 func (a MySQL) DSN() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
 		a.User, a.Password, a.Host, a.Port, a.DBName, a.Parameters)
 }
 
-// Postgres postgres配置参数
+// Postgres postgres
 type Postgres struct {
 	Host     string
 	Port     int
@@ -263,23 +232,23 @@ type Postgres struct {
 	SSLMode  string
 }
 
-// DSN 数据库连接串
+// DSN connect Postgres
 func (a Postgres) DSN() string {
 	return fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=%s",
 		a.Host, a.Port, a.User, a.DBName, a.Password, a.SSLMode)
 }
 
-// Sqlite3 sqlite3配置参数
+// Sqlite3
 type Sqlite3 struct {
 	Path string
 }
 
-// DSN 数据库连接串
+// DSN connect Sqlite3
 func (a Sqlite3) DSN() string {
 	return a.Path
 }
 
-// Mongo mongo配置参数
+// Mongo mongo
 type Mongo struct {
 	URI              string
 	Database         string
