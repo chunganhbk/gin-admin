@@ -7,7 +7,7 @@ func (t StatusText) String() string {
 	return string(t)
 }
 
-// 定义HTTP状态文本常量
+
 const (
 	OKStatus    StatusText = "OK"
 	ErrorStatus StatusText = "ERROR"

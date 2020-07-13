@@ -5,9 +5,9 @@ import (
 	"github.com/chunganhbk/gin-go/internal/app/repositories"
 	"github.com/chunganhbk/gin-go/internal/app/iutil"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/pkg/app"
 	"github.com/chunganhbk/gin-go/pkg/util"
 	"github.com/casbin/casbin/v2"
-
 )
 
 // UserService
@@ -65,14 +65,14 @@ func (u *UserService) QueryShow(ctx context.Context, params schema.UserQueryPara
 
 // Get
 func (u *UserService) Get(ctx context.Context, id string, opts ...schema.UserQueryOptions) (*schema.User, error) {
-	item, err := a.UserModel.Get(ctx, id, opts...)
+	item, err := u.UserRp.Get(ctx, id, opts...)
 	if err != nil {
 		return nil, err
 	} else if item == nil {
-		return nil, errors.ErrNotFound
+		return nil, app.ResponseNotFound()
 	}
 
-	userRoleResult, err := a.UserRoleModel.Query(ctx, schema.UserRoleQueryParam{
+	userRoleResult, err := u.UserRoleRp.Query(ctx, schema.UserRoleQueryParam{
 		UserID: id,
 	})
 	if err != nil {

@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -32,23 +33,41 @@ const (
 	ERROR_EXIST_EMAIL              = 30001
 )
 
+func ResError(c *gin.Context, err error, status ...int) {
+	ctx := c.Request.Context()
+	var res *ResponseError
+	if err != nil {
+		if e, ok := err.(*ResponseError); ok {
+			res = e
+		} else {
+			res.Code = ERROR
+			res.StatusCode = ERROR
+		}
+	} else {
+		res.Code = ERROR_INTERNAL_SERVER
+		res.StatusCode = ERROR
+	}
 
-func ResError(c *gin.Context, errCode int, err error) {
-	ResJSON(c, http.StatusBadRequest, errCode, nil, err)
+	if len(status) > 0 {
+		res.StatusCode = status[0]
+	}
+
+	if err := res.ERR; err != nil {
+		if status := res.StatusCode; status >= 400 && status < 500 {
+			logger.StartSpan(ctx).Warnf(err.Error())
+		} else if status >= 500 {
+			logger.ErrorStack(ctx, err)
+		}
+	}
+	ResJSON(c, res.StatusCode,  res.Code, nil, err)
 }
 func ResPage(c *gin.Context, v interface{}, pr *schema.PaginationResult) {
-	list := schema.HTTPList{
-		List: v,
-		Pagination: &schema.HTTPPagination{
-			Current:  GetPageIndex(c),
-			PageSize: GetPageSize(c),
-		},
+	list := schema.ListResult{
+		List:       v,
+		Pagination: pr,
 	}
-	if pr != nil {
-		list.Pagination.Total = pr.Total
-	}
-
 	ResSuccess(c, list)
+
 }
 func ResSuccess(c *gin.Context, v interface{}) {
 	ResJSON(c, http.StatusOK, SUCCESS, v, nil)

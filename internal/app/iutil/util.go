@@ -3,7 +3,6 @@ package iutil
 import (
 	"github.com/chunganhbk/gin-go/internal/app/config"
 	"github.com/chunganhbk/gin-go/pkg/logger"
-	"github.com/chunganhbk/gin-go/pkg/trace"
 	"github.com/chunganhbk/gin-go/pkg/unique"
 )
 
