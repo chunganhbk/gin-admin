@@ -13,8 +13,6 @@ type IUserService interface {
 
 	QueryUserMenuTree(ctx context.Context, userID string) (schema.MenuTrees, error)
 
-	UpdatePassword(ctx context.Context, userID string, params schema.UpdatePasswordParam) error
-
 	Query(ctx context.Context, params schema.UserQueryParam, opts ...schema.UserQueryOptions) (*schema.UserQueryResult, error)
 
 	QueryShow(ctx context.Context, params schema.UserQueryParam, opts ...schema.UserQueryOptions) (*schema.UserShowQueryResult, error)
@@ -28,4 +26,6 @@ type IUserService interface {
 	Delete(ctx context.Context, id string) error
 
 	UpdateStatus(ctx context.Context, id string, status int) error
+
+	ChangePassword(ctx context.Context, userID string, params schema.UpdatePasswordParam) error
 }

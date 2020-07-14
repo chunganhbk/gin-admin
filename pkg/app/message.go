@@ -16,11 +16,17 @@ var MsgFlags = map[int]string{
 	ERROR_INVALID_PARENT:           "Invalid parent node",
 	ERROR_ALLOW_DELETE_WITH_CHILD:  "Contains children, cannot be deleted",
 	ERROR_NOT_ALLOW_DELETE:         "Resources are not allowed to be deleted",
+	ERROR_INVALID_OLD_PASS:         "Old password is incorrect",
 	ERROR_NOT_FOUND:                "Resource does not exist",
+	ERROR_EXIST_MENU_NAME:          "Menu name already exists",
 	ERROR_USER_DISABLED:            "User is disabled, please contact administrator",
 	ERROR_NO_PERRMISSION:           "No access",
 	ERROR_METHOD_NOT_ALLOW:         "Method is not allowed",
 	ERROR_TOO_MANY_REQUEST:         "Requests are too frequent",
+	ERROR_LOGIN_FAILED:             "Email or password is invalid",
+	ERROR_EXIST_ROLE:               "Role name already exists",
+	ERROR_NOT_EXIST_USER:            "Account is invalid",
+	ERROR_EXIST_ROLE_USER:          "The role has been given to the user and is not allowed to be deleted",
 
 }
 

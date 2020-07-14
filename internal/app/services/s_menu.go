@@ -14,7 +14,7 @@ type IMenuService interface {
 
 	Get(ctx context.Context, id string, opts ...schema.MenuQueryOptions) (*schema.Menu, error)
 
-	Store(ctx context.Context, item schema.Menu) (*schema.IDResult, error)
+	Create(ctx context.Context, item schema.Menu) (*schema.IDResult, error)
 
 	Update(ctx context.Context, id string, item schema.Menu) error
 

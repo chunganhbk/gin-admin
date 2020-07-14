@@ -1,4 +1,4 @@
-package injector
+package models
 
 import (
 	"errors"
@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 
 	"github.com/chunganhbk/gin-go/internal/app/config"
-	igorm "github.com/LyricTian/server/v6/internal/app/models/impl/gorm"
+	igorm "github.com/chunganhbk/gin-go/internal/app/models/gorm"
 	"github.com/jinzhu/gorm"
 )
 
-// InitGormDB 初始化gorm存储
+// Init Gorm DB
 func InitGormDB() (*gorm.DB, func(), error) {
 	cfg := config.C.Gorm
 	db, cleanFunc, err := NewGormDB()
@@ -28,7 +28,7 @@ func InitGormDB() (*gorm.DB, func(), error) {
 	return db, cleanFunc, nil
 }
 
-// NewGormDB 创建DB实例
+// New GormDB
 func NewGormDB() (*gorm.DB, func(), error) {
 	cfg := config.C
 	var dsn string

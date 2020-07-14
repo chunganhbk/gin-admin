@@ -1,4 +1,4 @@
-package injector
+package app
 
 import (
 	"github.com/chunganhbk/gin-go/internal/app/config"

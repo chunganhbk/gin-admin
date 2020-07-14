@@ -7,51 +7,50 @@ import (
 
 
 
-// User 用户对象
+// User
 type User struct {
 	ID        string    `json:"id"`
-	UserName  string    `json:"user_name" binding:"required"`
-	RealName  string    `json:"real_name" binding:"required"`          // 真实姓名
-	Password  string    `json:"password"`                              // 密码
-	Phone     string    `json:"phone"`                                 // 手机号
-	Email     string    `json:"email"`                                 // 邮箱
-	Status    int       `json:"status" binding:"required,max=2,min=1"` // 用户状态(1:启用 2:停用)
-	Creator   string    `json:"creator"`                               // 创建者
-	CreatedAt time.Time `json:"created_at"`                            // 创建时间
-	UserRoles UserRoles `json:"user_roles" binding:"required,gt=0"`    // 角色授权
+	FullName  string    `json:"full_name" binding:"required"`
+	Password  string    `json:"password"`
+	Phone     string    `json:"phone"`
+	Email     string    `json:"email"`
+	Status    int       `json:"status" binding:"required,max=2,min=1"`
+	Creator   string    `json:"creator"`
+	CreatedAt time.Time `json:"created_at"`
+	UserRoles UserRoles `json:"user_roles" binding:"required,gt=0"`
 }
 
 func (a *User) String() string {
 	return util.JSONMarshalToString(a)
 }
 
-// CleanSecure 清理安全数据
+// CleanSecure
 func (a *User) CleanSecure() *User {
 	a.Password = ""
 	return a
 }
 
-// UserQueryParam 查询条件
+// UserQueryParam
 type UserQueryParam struct {
 	PaginationParam
-	UserName   string   `form:"userName"`   // 用户名
-	QueryValue string   `form:"queryValue"` // 模糊查询
-	Status     int      `form:"status"`     // 用户状态(1:启用 2:停用)
-	RoleIDs    []string `form:"-"`          // 角色ID列表
+	Email   string   `form:"email"`
+	QueryValue string   `form:"queryValue"`
+	Status     int      `form:"status"`
+	RoleIDs    []string `form:"-"`
 }
 
-// UserQueryOptions 查询可选参数项
+// User Query Options
 type UserQueryOptions struct {
-	OrderFields []*OrderField // 排序字段
+	OrderFields []*OrderField
 }
 
-// UserQueryResult 查询结果
+// User Query Result
 type UserQueryResult struct {
 	Data       Users
 	PageResult *PaginationResult
 }
 
-// ToShowResult 转换为显示结果
+// ToShow Result
 func (a UserQueryResult) ToShowResult(mUserRoles map[string]UserRoles, mRoles map[string]*Role) *UserShowQueryResult {
 	return &UserShowQueryResult{
 		PageResult: a.PageResult,
@@ -59,7 +58,7 @@ func (a UserQueryResult) ToShowResult(mUserRoles map[string]UserRoles, mRoles ma
 	}
 }
 
-// Users 用户对象列表
+// Users
 type Users []*User
 
 // ToIDs
@@ -71,7 +70,7 @@ func (a Users) ToIDs() []string {
 	return idList
 }
 
-// ToUserShows 转换为用户显示列表
+// ToUserShows
 func (a Users) ToUserShows(mUserRoles map[string]UserRoles, mRoles map[string]*Role) UserShows {
 	list := make(UserShows, len(a))
 	for i, item := range a {
@@ -90,35 +89,35 @@ func (a Users) ToUserShows(mUserRoles map[string]UserRoles, mRoles map[string]*R
 
 // ----------------------------------------UserRole--------------------------------------
 
-// UserRole 用户角色
+// UserRole
 type UserRole struct {
-	ID     string `json:"id"`      // 唯一标识
-	UserID string `json:"user_id"` // 用户ID
-	RoleID string `json:"role_id"` // 角色ID
+	ID     string `json:"id"`
+	UserID string `json:"user_id"`
+	RoleID string `json:"role_id"`
 }
 
-// UserRoleQueryParam 查询条件
+// UserRole Query Param
 type UserRoleQueryParam struct {
 	PaginationParam
-	UserID  string   // 用户ID
-	UserIDs []string // 用户ID列表
+	UserID  string
+	UserIDs []string
 }
 
-// UserRoleQueryOptions 查询可选参数项
+// UserRole Query Options
 type UserRoleQueryOptions struct {
-	OrderFields []*OrderField // 排序字段
+	OrderFields []*OrderField
 }
 
-// UserRoleQueryResult 查询结果
+// UserRole Query Result
 type UserRoleQueryResult struct {
 	Data       UserRoles
 	PageResult *PaginationResult
 }
 
-// UserRoles 角色菜单列表
+// UserRoles
 type UserRoles []*UserRole
 
-// ToMap 转换为map
+// ToMap
 func (a UserRoles) ToMap() map[string]*UserRole {
 	m := make(map[string]*UserRole)
 	for _, item := range a {
@@ -127,7 +126,7 @@ func (a UserRoles) ToMap() map[string]*UserRole {
 	return m
 }
 
-// ToRoleIDs 转换为角色ID列表
+// ToRoleIDs
 func (a UserRoles) ToRoleIDs() []string {
 	list := make([]string, len(a))
 	for i, item := range a {
@@ -136,7 +135,7 @@ func (a UserRoles) ToRoleIDs() []string {
 	return list
 }
 
-// ToUserIDMap 转换为用户ID映射
+// ToUserIDMap
 func (a UserRoles) ToUserIDMap() map[string]UserRoles {
 	m := make(map[string]UserRoles)
 	for _, item := range a {
@@ -147,22 +146,21 @@ func (a UserRoles) ToUserIDMap() map[string]UserRoles {
 
 // ----------------------------------------UserShow--------------------------------------
 
-// UserShow 用户显示项
+// UserShow
 type UserShow struct {
-	ID        string    `json:"id"`         // 唯一标识
-	UserName  string    `json:"user_name"`  // 用户名
-	RealName  string    `json:"real_name"`  // 真实姓名
-	Phone     string    `json:"phone"`      // 手机号
-	Email     string    `json:"email"`      // 邮箱
-	Status    int       `json:"status"`     // 用户状态(1:启用 2:停用)
-	CreatedAt time.Time `json:"created_at"` // 创建时间
-	Roles     []*Role   `json:"roles"`      // 授权角色列表
+	ID        string    `json:"id"`
+	FullName  string    `json:"real_name"`
+	Phone     string    `json:"phone"`
+	Email     string    `json:"email"`
+	Status    int       `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	Roles     []*Role   `json:"roles"`
 }
 
-// UserShows 用户显示项列表
+// UserShows
 type UserShows []*UserShow
 
-// UserShowQueryResult 用户显示项查询结果
+// UserShow QueryResult
 type UserShowQueryResult struct {
 	Data       UserShows
 	PageResult *PaginationResult

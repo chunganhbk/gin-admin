@@ -1,6 +1,6 @@
 package schema
 
-// StatusText 定义状态文本
+// StatusText
 type StatusText string
 
 func (t StatusText) String() string {
@@ -14,41 +14,41 @@ const (
 	FailStatus  StatusText = "FAIL"
 )
 
-// StatusResult 响应状态
+// StatusResult
 type StatusResult struct {
-	Status StatusText `json:"status"` // 状态(OK)
+	Status StatusText `json:"status"`
 }
 
-// ErrorResult 响应错误
+// ErrorResult
 type ErrorResult struct {
-	Error ErrorItem `json:"error"` // 错误项
+	Error ErrorItem `json:"error"`
 }
 
-// ErrorItem 响应错误项
+// ErrorItem
 type ErrorItem struct {
-	Code    int    `json:"code"`    // 错误码
-	Message string `json:"message"` // 错误信息
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
-// ListResult 响应列表数据
+// ListResult
 type ListResult struct {
 	List       interface{}       `json:"list"`
 	Pagination *PaginationResult `json:"pagination,omitempty"`
 }
 
-// PaginationResult 分页查询结果
+// PaginationResult
 type PaginationResult struct {
 	Total    int  `json:"total"`
 	Current  uint `json:"current"`
 	PageSize uint `json:"pageSize"`
 }
 
-// PaginationParam 分页查询条件
+// Pagination Param
 type PaginationParam struct {
-	Pagination bool `form:"-"`                                     // 是否使用分页查询
-	OnlyCount  bool `form:"-"`                                     // 是否仅查询count
-	Current    uint `form:"current,default=1"`                     // 当前页
-	PageSize   uint `form:"pageSize,default=10" binding:"max=100"` // 页大小
+	Pagination bool `form:"-"`
+	OnlyCount  bool `form:"-"`
+	Current    uint `form:"current,default=1"`
+	PageSize   uint `form:"pageSize,default=10" binding:"max=100"`
 }
 
 // GetCurrent 获取当前页
@@ -65,7 +65,7 @@ func (a PaginationParam) GetPageSize() uint {
 	return pageSize
 }
 
-// OrderDirection 排序方向
+// OrderDirection
 type OrderDirection int
 
 const (
@@ -75,9 +75,7 @@ const (
 	OrderByDESC OrderDirection = 2
 )
 
-// NewOrderFieldWithKeys 创建排序字段(默认升序排序)，可指定不同key的排序规则
-// keys 需要排序的key
-// directions 排序规则，按照key的索引指定，索引默认从0开始
+
 func NewOrderFieldWithKeys(keys []string, directions ...map[int]OrderDirection) []*OrderField {
 	m := make(map[int]OrderDirection)
 	if len(directions) > 0 {
@@ -97,7 +95,7 @@ func NewOrderFieldWithKeys(keys []string, directions ...map[int]OrderDirection) 
 	return fields
 }
 
-// NewOrderFields 创建排序字段列表
+// New Order Fields
 func NewOrderFields(orderFields ...*OrderField) []*OrderField {
 	return orderFields
 }
@@ -112,11 +110,11 @@ func NewOrderField(key string, d OrderDirection) *OrderField {
 
 // OrderField 排序字段
 type OrderField struct {
-	Key       string         // 字段名(字段名约束为小写蛇形)
-	Direction OrderDirection // 排序方向
+	Key       string
+	Direction OrderDirection
 }
 
-// NewIDResult 创建响应唯一标识实例
+// NewID Result
 func NewIDResult(id string) *IDResult {
 	return &IDResult{
 		ID: id,

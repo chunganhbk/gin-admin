@@ -1,15 +1,15 @@
-package injector
+package models
 
 import (
 	"context"
 	"time"
 
 	"github.com/chunganhbk/gin-go/internal/app/config"
-	imongo "github.com/LyricTian/server/v6/internal/app/models/impl/mongo"
+	imongo "github.com/chunganhbk/gin-go/internal/app/models/mongo"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// InitMongo 初始化mongo存储
+// InitMongo
 func InitMongo() (*mongo.Client, func(), error) {
 	cfg := config.C.Mongo
 	client, cleanFunc, err := imongo.NewClient(&imongo.Config{

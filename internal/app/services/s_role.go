@@ -12,7 +12,7 @@ type IRoleService interface {
 
 	Get(ctx context.Context, id string, opts ...schema.RoleQueryOptions) (*schema.Role, error)
 
-	Store(ctx context.Context, item schema.Role) (*schema.IDResult, error)
+	Create(ctx context.Context, item schema.Role) (*schema.IDResult, error)
 
 	Update(ctx context.Context, id string, item schema.Role) error
 

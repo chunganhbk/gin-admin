@@ -8,13 +8,13 @@ import (
 
 	"github.com/chunganhbk/gin-go/internal/app/config"
 	"github.com/chunganhbk/gin-go/pkg/logger"
-	loggerhook "github.com/LyricTian/server/v6/pkg/logger/hook"
-	loggergormhook "github.com/LyricTian/server/v6/pkg/logger/hook/gorm"
-	loggermongohook "github.com/LyricTian/server/v6/pkg/logger/hook/mongo"
+	loggerhook "github.com/chunganhbk/gin-go/pkg/logger/hook"
+	loggergormhook "github.com/chunganhbk/gin-go/pkg/logger/hook/gorm"
+	loggermongohook "github.com/chunganhbk/gin-go/pkg/logger/hook/mongo"
 	"github.com/sirupsen/logrus"
 )
 
-// InitLogger 初始化日志模块
+// InitLogger
 func InitLogger() (func(), error) {
 	c := config.C.Log
 	logger.SetLevel(c.Level)

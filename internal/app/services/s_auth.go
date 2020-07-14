@@ -11,6 +11,6 @@ type IAuthService interface {
 
 	Verify(ctx context.Context, userName, password string) (*schema.User, error)
 
-	GenerateToken(ctx context.Context, userID string) (*schema.LoginTokenInfo, error)
+	GenerateToken(userID string) (*schema.LoginTokenInfo, error)
 
 }

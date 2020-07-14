@@ -4,7 +4,10 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/chunganhbk/gin-go/internal/app/services"
+	"github.com/chunganhbk/gin-go/internal/app/services/impl"
 	"github.com/chunganhbk/gin-go/pkg/jwt"
+	"go.uber.org/dig"
 	"net/http"
 	"os"
 	"os/signal"
@@ -87,12 +90,12 @@ func Init(ctx context.Context, opts ...Option) (func(), error) {
 	}
 	config.PrintWithJSON()
 
-	logger.Printf(ctx, "服务启动，运行模式：%s，版本号：%s，进程号：%d", config.C.RunMode, o.Version, os.Getpid())
+	logger.Printf(ctx, "Service started, running mode：%s，version number：%s，process number：%d", config.C.RunMode, o.Version, os.Getpid())
 
 	// Initialize unique id
 	iutil.InitID()
 
-	// 初始化日志模块
+
 	loggerCleanFunc, err := InitLogger()
 	if err != nil {
 		return nil, err
@@ -101,28 +104,24 @@ func Init(ctx context.Context, opts ...Option) (func(), error) {
 	// 初始化服务运行监控
 	InitMonitor(ctx)
 
+	container, containerCall := BuildContainer()
 
 
-	// 初始化依赖注入器
-	injector, injectorCleanFunc, err := injector.BuildInjector()
-	if err != nil {
-		return nil, err
-	}
 
-	// 初始化菜单数据
+	// init data
 	if config.C.Menu.Enable && config.C.Menu.Data != "" {
-		err = injector.MenuBll.InitData(ctx, config.C.Menu.Data)
+		err = services.IMenuService.InitData(ctx,  config.C.Menu.Data)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	// 初始化HTTP服务
+
 	httpServerCleanFunc := InitHTTPServer(ctx, injector.Engine)
 
 	return func() {
 		httpServerCleanFunc()
-		injectorCleanFunc()
+		containerCall()
 		loggerCleanFunc()
 	}, nil
 }
@@ -139,7 +138,7 @@ func InitMonitor(ctx context.Context) {
 	}
 }
 
-// InitHTTPServer 初始化http服务
+// InitHTTPServer http
 func InitHTTPServer(ctx context.Context, handler http.Handler) func() {
 	cfg := config.C.HTTP
 	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
@@ -176,7 +175,7 @@ func InitHTTPServer(ctx context.Context, handler http.Handler) func() {
 	}
 }
 
-// Run 运行服务
+// Run server
 func Run(ctx context.Context, opts ...Option) error {
 	var state int32 = 1
 	sc := make(chan os.Signal, 1)
@@ -189,7 +188,7 @@ func Run(ctx context.Context, opts ...Option) error {
 EXIT:
 	for {
 		sig := <-sc
-		logger.Printf(ctx, "接收到信号[%s]", sig.String())
+		logger.Printf(ctx, "Received a signal[%s]", sig.String())
 		switch sig {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			atomic.CompareAndSwapInt32(&state, 1, 0)
@@ -201,17 +200,45 @@ EXIT:
 	}
 
 	cleanFunc()
-	logger.Printf(ctx, "服务退出")
+	logger.Printf(ctx, "Service exit")
 	time.Sleep(time.Second)
 	os.Exit(int(atomic.LoadInt32(&state)))
 	return nil
 }
-func InitAuth(cfg *config.Config) (jwt.IJWTAuth, error) {
-	jwtConfig := cfg.JWTAuth
-	var opts []jwt.Option
 
-	opts = append(opts, jwt.SetExpired(jwtConfig.Expired))
-	opts = append(opts, jwt.SetSigningKey([]byte(jwtConfig.SigningKey)))
-	return jwt.NewJWTAuth(opts...), nil
+func BuildContainer() (*dig.Container, func()) {
+	container := dig.New()
 
+	auther, err := InitAuth()
+	handleError(err)
+	_ = container.Provide(func() jwt.IJWTAuth {
+		return auther
+	})
+
+	//casbin
+	_ = container.Provide(NewCasbinEnforcer)
+
+
+	//store DB
+	storeCall, err := InitStore(container)
+	handleError(err)
+
+	//register service
+	err = impl.Inject(container)
+	handleError(err)
+
+
+	return container, func() {
+
+		ReleaseCasbinEnforcer(container)
+
+		if storeCall != nil {
+			storeCall()
+		}
+	}
+}
+func handleError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

@@ -27,7 +27,7 @@ func init() {
 	}()
 }
 
-// LoadCasbinPolicy 异步加载casbin权限策略
+// Load Casbin Policy
 func LoadCasbinPolicy(ctx context.Context, e *casbin.SyncedEnforcer) {
 	if !config.C.Casbin.Enable {
 		return

@@ -27,7 +27,7 @@ type RoleQueryParam struct {
 
 // RoleQueryOptions 查询可选参数项
 type RoleQueryOptions struct {
-	OrderFields []*OrderField // 排序字段
+	OrderFields []*OrderField
 }
 
 // RoleQueryResult 查询结果

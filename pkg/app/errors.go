@@ -31,8 +31,11 @@ func ResponseNotFound() error {
 	}
 	return res
 }
-func New400Response() error {
-	return NewResponse(INVALID_PARAMS, INVALID_PARAMS)
+func New400Response(code int) error {
+	return NewResponse(code, INVALID_PARAMS)
+}
+func NoPermissionResponse() error {
+	return NewResponse(ERROR_NO_PERRMISSION, ERROR_NO_PERRMISSION)
 }
 var (
 	New          = errors.New

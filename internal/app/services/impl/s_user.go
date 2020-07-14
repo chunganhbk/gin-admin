@@ -8,21 +8,28 @@ import (
 	"github.com/chunganhbk/gin-go/pkg/app"
 	"github.com/chunganhbk/gin-go/pkg/util"
 	"github.com/casbin/casbin/v2"
+	"sort"
 )
 
 // UserService
 type UserService struct {
-	Enforcer      *casbin.SyncedEnforcer
-	TransRp    repositories.ITrans
-	UserRp     repositories.IUser
-	UserRoleRp repositories.IUserRole
-	RoleRp     repositories.IRole
+	Enforcer       *casbin.SyncedEnforcer
+	TransRp        repositories.ITrans
+	UserRp         repositories.IUser
+	UserRoleRp     repositories.IUserRole
+	RoleRp         repositories.IRole
+	RoleMenuRp     repositories.IRoleMenu
+	MenuRp         repositories.IMenu
+	MenuActionRp         repositories.IMenuAction
 }
 func NewUserService (
 	enforcer      *casbin.SyncedEnforcer,
 	transRp    repositories.ITrans,
 	userRp     repositories.IUser,
 	userRoleRp repositories.IUserRole,
+	roleMenuRp     repositories.IRoleMenu,
+	menuRp         repositories.IMenu,
+	menuActionRp         repositories.IMenuAction,
 	roleRp     repositories.IRole) *UserService {
 	return &UserService{
 		Enforcer: enforcer,
@@ -30,6 +37,9 @@ func NewUserService (
 		RoleRp: roleRp,
 		UserRp: userRp,
 		UserRoleRp: userRoleRp,
+		RoleMenuRp: roleMenuRp,
+		MenuRp: menuRp,
+		MenuActionRp: menuActionRp,
 	}
 }
 // Query
@@ -83,59 +93,59 @@ func (u *UserService) Get(ctx context.Context, id string, opts ...schema.UserQue
 	return item, nil
 }
 
-// Create 创建数据
-func (a *User) Create(ctx context.Context, item schema.User) (*schema.IDResult, error) {
-	err := a.checkUserName(ctx, item)
+// Create
+func (u *UserService) Create(ctx context.Context, item schema.User) (*schema.IDResult, error) {
+	err := u.checkEmail(ctx, item)
 	if err != nil {
 		return nil, err
 	}
 
 	item.Password = util.BcryptPwd(item.Password)
 	item.ID = iutil.NewID()
-	err = ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+	err = ExecTrans(ctx, u.TransRp, func(ctx context.Context) error {
 		for _, urItem := range item.UserRoles {
 			urItem.ID = iutil.NewID()
 			urItem.UserID = item.ID
-			err := a.UserRoleModel.Create(ctx, *urItem)
+			err := u.UserRoleRp.Create(ctx, *urItem)
 			if err != nil {
 				return err
 			}
 		}
 
-		return a.UserModel.Create(ctx, item)
+		return u.UserRp.Create(ctx, item)
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	LoadCasbinPolicy(ctx, a.Enforcer)
+	LoadCasbinPolicy(ctx, u.Enforcer)
 	return schema.NewIDResult(item.ID), nil
 }
 
-func (a *User) checkUserName(ctx context.Context, item schema.User) error {
+func (u *UserService) checkEmail(ctx context.Context, item schema.User) error {
 
 
-	result, err := a.UserModel.Query(ctx, schema.UserQueryParam{
+	result, err := u.UserRp.Query(ctx, schema.UserQueryParam{
 		PaginationParam: schema.PaginationParam{OnlyCount: true},
-		UserName:        item.UserName,
+		Email:        item.Email,
 	})
 	if err != nil {
 		return err
 	} else if result.PageResult.Total > 0 {
-		return errors.New400Response("用户名已经存在")
+		return app.New400Response(app.ERROR_EXIST_EMAIL)
 	}
 	return nil
 }
 
-// Update 更新数据
-func (a *User) Update(ctx context.Context, id string, item schema.User) error {
-	oldItem, err := a.Get(ctx, id)
+// Update user
+func (u *UserService) Update(ctx context.Context, id string, item schema.User) error {
+	oldItem, err := u.Get(ctx, id)
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return errors.ErrNotFound
-	} else if oldItem.UserName != item.UserName {
-		err := a.checkUserName(ctx, item)
+		return app.ResponseNotFound()
+	} else if oldItem.Email != item.Email {
+		err := u.checkEmail(ctx, item)
 		if err != nil {
 			return err
 		}
@@ -150,35 +160,35 @@ func (a *User) Update(ctx context.Context, id string, item schema.User) error {
 	item.ID = oldItem.ID
 	item.Creator = oldItem.Creator
 	item.CreatedAt = oldItem.CreatedAt
-	err = ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
-		addUserRoles, delUserRoles := a.compareUserRoles(ctx, oldItem.UserRoles, item.UserRoles)
+	err = ExecTrans(ctx, u.TransRp, func(ctx context.Context) error {
+		addUserRoles, delUserRoles := u.compareUserRoles(ctx, oldItem.UserRoles, item.UserRoles)
 		for _, rmitem := range addUserRoles {
 			rmitem.ID = iutil.NewID()
 			rmitem.UserID = id
-			err := a.UserRoleModel.Create(ctx, *rmitem)
+			err := u.UserRoleRp.Create(ctx, *rmitem)
 			if err != nil {
 				return err
 			}
 		}
 
 		for _, rmitem := range delUserRoles {
-			err := a.UserRoleModel.Delete(ctx, rmitem.ID)
+			err := u.UserRoleRp.Delete(ctx, rmitem.ID)
 			if err != nil {
 				return err
 			}
 		}
 
-		return a.UserModel.Update(ctx, id, item)
+		return u.UserRp.Update(ctx, id, item)
 	})
 	if err != nil {
 		return err
 	}
 
-	LoadCasbinPolicy(ctx, a.Enforcer)
+	LoadCasbinPolicy(ctx, u.Enforcer)
 	return nil
 }
 
-func (a *User) compareUserRoles(ctx context.Context, oldUserRoles, newUserRoles schema.UserRoles) (addList, delList schema.UserRoles) {
+func (u *UserService) compareUserRoles(ctx context.Context, oldUserRoles, newUserRoles schema.UserRoles) (addList, delList schema.UserRoles) {
 	mOldUserRoles := oldUserRoles.ToMap()
 	mNewUserRoles := newUserRoles.ToMap()
 
@@ -196,46 +206,167 @@ func (a *User) compareUserRoles(ctx context.Context, oldUserRoles, newUserRoles 
 	return
 }
 
-// Delete 删除数据
-func (a *User) Delete(ctx context.Context, id string) error {
-	oldItem, err := a.UserModel.Get(ctx, id)
+// Delete user
+func (u *UserService) Delete(ctx context.Context, id string) error {
+	oldItem, err := u.UserRp.Get(ctx, id)
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return errors.ErrNotFound
+		return app.ResponseNotFound()
 	}
 
-	err = ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
-		err := a.UserRoleModel.DeleteByUserID(ctx, id)
+	err = ExecTrans(ctx, u.TransRp, func(ctx context.Context) error {
+		err := u.UserRoleRp.DeleteByUserID(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		return a.UserModel.Delete(ctx, id)
+		return u.UserRp.Delete(ctx, id)
 	})
 	if err != nil {
 		return err
 	}
 
-	LoadCasbinPolicy(ctx, a.Enforcer)
+	LoadCasbinPolicy(ctx, u.Enforcer)
 	return nil
 }
 
-// UpdateStatus
-func (a *User) UpdateStatus(ctx context.Context, id string, status int) error {
-	oldItem, err := a.UserModel.Get(ctx, id)
+// Update Status
+func (u *UserService) UpdateStatus(ctx context.Context, id string, status int) error {
+	oldItem, err := u.UserRp.Get(ctx, id)
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return errors.ErrNotFound
+		return app.ResponseNotFound()
 	}
 	oldItem.Status = status
 
-	err = a.UserModel.UpdateStatus(ctx, id, status)
+	err = u.UserRp.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return err
 	}
 
-	LoadCasbinPolicy(ctx, a.Enforcer)
+	LoadCasbinPolicy(ctx, u.Enforcer)
 	return nil
+}
+func (u *UserService) checkAndGetUser(ctx context.Context, userID string) (*schema.User, error) {
+	user, err := u.Get(ctx, userID)
+	if err != nil {
+		return nil, err
+	} else if user == nil {
+		return nil, app.New400Response(app.ERROR_NOT_EXIST_USER)
+	} else if user.Status != 1 {
+		return nil, app.New400Response(app.ERROR_USER_DISABLED)
+	}
+	return user, nil
+}
+
+// Get Login Info
+func (u *UserService) GetLoginInfo(ctx context.Context, userID string) (*schema.UserLoginInfo, error) {
+
+	user, err := u.checkAndGetUser(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	info := &schema.UserLoginInfo{
+		UserID:   user.ID,
+		Email: user.Email,
+		FullName: user.FullName,
+	}
+
+	userRoleResult, err := u.UserRoleRp.Query(ctx, schema.UserRoleQueryParam{
+		UserID: userID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if roleIDs := userRoleResult.Data.ToRoleIDs(); len(roleIDs) > 0 {
+		roleResult, err := u.RoleRp.Query(ctx, schema.RoleQueryParam{
+			IDs:    roleIDs,
+			Status: 1,
+		})
+		if err != nil {
+			return nil, err
+		}
+		info.Roles = roleResult.Data
+	}
+
+	return info, nil
+}
+
+// Query UserMenu Tree
+func (u *UserService) QueryUserMenuTree(ctx context.Context, userID string) (schema.MenuTrees, error) {
+
+
+	userRoleResult, err := u.UserRoleRp.Query(ctx, schema.UserRoleQueryParam{
+		UserID: userID,
+	})
+	if err != nil {
+		return nil, err
+	} else if len(userRoleResult.Data) == 0 {
+		return nil, app.NoPermissionResponse()
+	}
+
+	roleMenuResult, err := u.RoleMenuRp.Query(ctx, schema.RoleMenuQueryParam{
+		RoleIDs: userRoleResult.Data.ToRoleIDs(),
+	})
+	if err != nil {
+		return nil, err
+	} else if len(roleMenuResult.Data) == 0 {
+		return nil, app.NoPermissionResponse()
+	}
+
+	menuResult, err := u.MenuRp.Query(ctx, schema.MenuQueryParam{
+		IDs:    roleMenuResult.Data.ToMenuIDs(),
+		Status: 1,
+	})
+	if err != nil {
+		return nil, err
+	} else if len(menuResult.Data) == 0 {
+		return nil, app.NoPermissionResponse()
+	}
+
+	mData := menuResult.Data.ToMap()
+	var qIDs []string
+	for _, pid := range menuResult.Data.SplitParentIDs() {
+		if _, ok := mData[pid]; !ok {
+			qIDs = append(qIDs, pid)
+		}
+	}
+
+	if len(qIDs) > 0 {
+		pmenuResult, err := u.MenuRp.Query(ctx, schema.MenuQueryParam{
+			IDs: menuResult.Data.SplitParentIDs(),
+		})
+		if err != nil {
+			return nil, err
+		}
+		menuResult.Data = append(menuResult.Data, pmenuResult.Data...)
+	}
+
+	sort.Sort(menuResult.Data)
+	menuActionResult, err := u.MenuActionRp.Query(ctx, schema.MenuActionQueryParam{
+		IDs: roleMenuResult.Data.ToActionIDs(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return menuResult.Data.FillMenuAction(menuActionResult.Data.ToMenuIDMap()).ToTree(), nil
+}
+
+// Update Password
+func (u *UserService) ChangePassword(ctx context.Context, userID string, params schema.UpdatePasswordParam) error {
+
+
+	user, err := u.checkAndGetUser(ctx, userID)
+	if err != nil {
+		return err
+	} else if util.ComparePasswords(user.Password, params.OldPassword) {
+		return app.New400Response(app.ERROR_INVALID_OLD_PASS)
+	}
+
+	params.NewPassword = util.BcryptPwd(params.NewPassword)
+	return u.UserRp.UpdatePassword(ctx, userID, params.NewPassword)
 }

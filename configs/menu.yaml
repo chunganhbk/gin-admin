@@ -1,5 +1,4 @@
----
-# 菜单配置初始化(服务启动时会进行数据检查，如果存在则不再初始化)
+
 - name: 首页
   icon: dashboard
   router: "/dashboard"

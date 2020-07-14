@@ -5,18 +5,17 @@ import (
 	"os"
 	"strings"
 	"sync"
-
 	"github.com/chunganhbk/gin-go/pkg/util"
 	"github.com/koding/multiconfig"
 )
 
 var (
-	// C 全局配置(需要先执行MustLoad，否则拿不到配置)
+
 	C    = new(Config)
 	once sync.Once
 )
 
-// MustLoad 加载配置
+// MustLoad
 func MustLoad(fpaths ...string) {
 	once.Do(func() {
 		loaders := []multiconfig.Loader{
@@ -44,7 +43,7 @@ func MustLoad(fpaths ...string) {
 	})
 }
 
-// PrintWithJSON 基于JSON格式输出配置
+// Print With JSON
 func PrintWithJSON() {
 	if C.PrintConfig {
 		b, err := util.JSONMarshalIndent(C, "", " ")
@@ -56,26 +55,23 @@ func PrintWithJSON() {
 	}
 }
 
-// Config 配置参数
+// Config
 type Config struct {
 	RunMode      string
 	WWW          string
 	Swagger      bool
 	PrintConfig  bool
+	Store        string
 	HTTP         HTTP
 	Menu         Menu
 	Casbin       Casbin
 	Log          Log
 	LogGormHook  LogGormHook
 	LogMongoHook LogMongoHook
-	Root         Root
 	JWTAuth      JWTAuth
 	Monitor      Monitor
-	Captcha      Captcha
-	RateLimiter  RateLimiter
 	CORS         CORS
 	GZIP         GZIP
-	Redis        Redis
 	Gorm         Gorm
 	MySQL        MySQL
 	Postgres     Postgres
@@ -90,18 +86,18 @@ type Config struct {
 	}
 }
 
-// IsDebugMode 是否是debug模式
+// IsDebugMode
 func (c *Config) IsDebugMode() bool {
 	return c.RunMode == "debug"
 }
 
-// Menu 菜单配置参数
+// Menu
 type Menu struct {
 	Enable bool
 	Data   string
 }
 
-// Casbin casbin配置参数
+// Casbin
 type Casbin struct {
 	Enable           bool
 	Debug            bool
@@ -110,20 +106,20 @@ type Casbin struct {
 	AutoLoadInternal int
 }
 
-// LogHook 日志钩子
+// LogHook
 type LogHook string
 
-// IsGorm 是否是gorm钩子
+// IsGorm gorm
 func (h LogHook) IsGorm() bool {
 	return h == "gorm"
 }
 
-// IsMongo 是否是mongo钩子
+// IsMongo mongo
 func (h LogHook) IsMongo() bool {
 	return h == "mongo"
 }
 
-// Log 日志配置参数
+// Log
 type Log struct {
 	Level         int
 	Format        string
@@ -136,7 +132,7 @@ type Log struct {
 	HookMaxBuffer int
 }
 
-// LogGormHook 日志gorm钩子配置
+// Log Gorm Hook
 type LogGormHook struct {
 	DBType       string
 	MaxLifetime  int
@@ -145,13 +141,13 @@ type LogGormHook struct {
 	Table        string
 }
 
-// LogMongoHook 日志mongo钩子配置
+// Log Mongo Hook
 type LogMongoHook struct {
 	Collection string
 }
 
 
-// JWTAuth 用户认证
+// JWTAuth
 type JWTAuth struct {
 	SigningKey    string
 	Expired       int

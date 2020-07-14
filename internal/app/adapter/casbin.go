@@ -3,12 +3,11 @@ package adapter
 import (
 	"context"
 	"fmt"
+	casbinModel "github.com/casbin/casbin/v2/model"
+	"github.com/casbin/casbin/v2/persist"
 	"github.com/chunganhbk/gin-go/internal/app/repositories"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/chunganhbk/gin-go/pkg/logger"
-	casbinModel "github.com/casbin/casbin/v2/model"
-	"github.com/casbin/casbin/v2/persist"
-
 )
 /*type Adapter interface {
     // LoadPolicy loads all policy rules from the storage.
@@ -35,7 +34,17 @@ type CasbinAdapter struct {
 	UserRp        repositories.IUser
 	UserRoleRp     repositories.IUserRole
 }
-
+func NewCasbinAdapter(roleRp repositories.IRole, roleMenuRp repositories.IRoleMenu,
+	menuResourceRp repositories.IMenuActionResource,
+    userRp repositories.IUser, userRoleRp repositories.IUserRole) *CasbinAdapter {
+	return &CasbinAdapter{
+		RoleRp:   roleRp,
+		RoleMenuRp:   roleMenuRp,
+		MenuResourceRp: menuResourceRp,
+		UserRp:    userRp,
+		UserRoleRp:   userRoleRp,
+	}
+}
 // LoadPolicy loads all policy rules from the storage.
 func (c *CasbinAdapter) LoadPolicy(model casbinModel.Model) error {
 	ctx := context.Background()
@@ -54,7 +63,7 @@ func (c *CasbinAdapter) LoadPolicy(model casbinModel.Model) error {
 	return nil
 }
 
-// 加载角色策略(p,role_id,path,method)
+// load Role Policy  (p,role_id,path,method)
 func (c *CasbinAdapter) loadRolePolicy(ctx context.Context, m casbinModel.Model) error {
 	roleResult, err := c.RoleRp.Query(ctx, schema.RoleQueryParam{
 		Status: 1,
@@ -100,7 +109,7 @@ func (c *CasbinAdapter) loadRolePolicy(ctx context.Context, m casbinModel.Model)
 	return nil
 }
 
-// 加载用户策略(g,user_id,role_id)
+// load User Policy(g,user_id,role_id)
 func (c *CasbinAdapter) loadUserPolicy(ctx context.Context, m casbinModel.Model) error {
 	userResult, err := c.UserRp.Query(ctx, schema.UserQueryParam{
 		Status: 1,

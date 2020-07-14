@@ -10,7 +10,7 @@ type LoginParam struct {
 // User LoginInfo
 type UserLoginInfo struct {
 	UserID   string `json:"user_id"`
-	UserName string `json:"user_name"`
+	Email string    `json:"email"`
 	FullName string `json:"full_name"`
 	Roles    Roles  `json:"roles"`
 }
