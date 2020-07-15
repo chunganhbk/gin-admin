@@ -8,42 +8,42 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// GetMenuActionDB 菜单动作
+// GetMenuActionDB
 func GetMenuActionDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
 	return GetDBWithModel(ctx, defDB, new(MenuAction))
 }
 
-// SchemaMenuAction 菜单动作
+// SchemaMenuAction
 type SchemaMenuAction schema.MenuAction
 
-// ToMenuAction 转换为菜单动作实体
+// ToMenuAction
 func (a SchemaMenuAction) ToMenuAction() *MenuAction {
 	item := new(MenuAction)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// MenuAction 菜单动作实体
+// MenuAction
 type MenuAction struct {
 	Model
-	MenuID string `gorm:"column:menu_id;size:36;index;default:'';not null;"` // 菜单ID
-	Code   string `gorm:"column:code;size:100;default:'';not null;"`         // 动作编号
-	Name   string `gorm:"column:name;size:100;default:'';not null;"`         // 动作名称
+	MenuID string `gorm:"column:menu_id;size:36;index;default:'';not null;"`
+	Code   string `gorm:"column:code;size:100;default:'';not null;"`
+	Name   string `gorm:"column:name;size:100;default:'';not null;"`
 }
 
 
 
-// ToSchemaMenuAction 转换为菜单动作对象
+// ToSchema MenuAction
 func (a MenuAction) ToSchemaMenuAction() *schema.MenuAction {
 	item := new(schema.MenuAction)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// MenuActions 菜单动作列表
+// Menu Actions
 type MenuActions []*MenuAction
 
-// ToSchemaMenuActions 转换为菜单动作对象列表
+// ToSchema Menu Actions
 func (a MenuActions) ToSchemaMenuActions() []*schema.MenuAction {
 	list := make([]*schema.MenuAction, len(a))
 	for i, item := range a {

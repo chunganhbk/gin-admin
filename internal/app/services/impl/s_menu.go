@@ -63,7 +63,7 @@ func (m *MenuService) createMenus(ctx context.Context, parentID string, list sch
 		for _, item := range list {
 			sitem := schema.Menu{
 				Name:       item.Name,
-				Sequence:   item.Sequence,
+				Order:      item.Order,
 				Icon:       item.Icon,
 				Router:     item.Router,
 				ParentID:   parentID,
@@ -159,7 +159,7 @@ func (m *MenuService) checkName(ctx context.Context, item schema.Menu) error {
 	if err != nil {
 		return err
 	} else if result.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_EXIST_MENU_NAME)
+		return app.New400Response(app.ERROR_EXIST_MENU_NAME, nil)
 	}
 	return nil
 }
@@ -225,7 +225,7 @@ func (m *MenuService) getParentPath(ctx context.Context, parentID string) (strin
 	if err != nil {
 		return "", err
 	} else if pitem == nil {
-		return "", app.New400Response(app.ERROR_INVALID_PARENT)
+		return "", app.New400Response(app.ERROR_INVALID_PARENT, nil)
 	}
 
 	return m.joinParentPath(pitem.ParentPath, pitem.ID), nil
@@ -241,7 +241,7 @@ func (m *MenuService) joinParentPath(parent, id string) string {
 // Update menu
 func (m *MenuService) Update(ctx context.Context, id string, item schema.Menu) error {
 	if id == item.ParentID {
-		return app.New400Response(app.ERROR_INVALID_PARENT)
+		return app.New400Response(app.ERROR_INVALID_PARENT, nil)
 	}
 
 	oldItem, err := m.Get(ctx, id)
@@ -418,7 +418,7 @@ func (m *MenuService) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	} else if result.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_ALLOW_DELETE_WITH_CHILD)
+		return app.New400Response(app.ERROR_ALLOW_DELETE_WITH_CHILD, nil)
 	}
 
 	return ExecTrans(ctx, m.TransRp, func(ctx context.Context) error {

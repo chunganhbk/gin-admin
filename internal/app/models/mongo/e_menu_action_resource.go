@@ -9,52 +9,52 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// GetMenuActionResourceCollection 获取MenuActionResource存储
+// GetMenuActionResourceCollection
 func GetMenuActionResourceCollection(ctx context.Context, cli *mongo.Client) *mongo.Collection {
 	return GetCollection(ctx, cli, MenuActionResource{})
 }
 
-// SchemaMenuActionResource 菜单动作关联资源
+// SchemaMenuActionResource
 type SchemaMenuActionResource schema.MenuActionResource
 
-// ToMenuActionResource 转换为菜单动作关联资源实体
+// ToMenuActionResource
 func (a SchemaMenuActionResource) ToMenuActionResource() *MenuActionResource {
 	item := new(MenuActionResource)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// MenuActionResource 菜单动作关联资源实体
+// MenuActionResource
 type MenuActionResource struct {
 	Model    `bson:",inline"`
-	ActionID string `bson:"action_id"` // 菜单动作ID
-	Method   string `bson:"method"`    // 资源请求方式(支持正则)
-	Path     string `bson:"path"`      // 资源请求路径（支持/:id匹配）
+	ActionID string `bson:"action_id"`
+	Method   string `bson:"method"`
+	Path     string `bson:"path"`
 }
 
-// CollectionName 集合名
+// CollectionName
 func (a MenuActionResource) CollectionName() string {
 	return a.Model.CollectionName("menu_action_resource")
 }
 
-// CreateIndexes 创建索引
+// CreateIndexes
 func (a MenuActionResource) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	return a.Model.CreateIndexes(ctx, cli, a, []mongo.IndexModel{
 		{Keys: bson.M{"action_id": 1}},
 	})
 }
 
-// ToSchemaMenuActionResource 转换为菜单动作关联资源对象
+// ToSchemaMenuActionResource
 func (a MenuActionResource) ToSchemaMenuActionResource() *schema.MenuActionResource {
 	item := new(schema.MenuActionResource)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// MenuActionResources 菜单动作关联资源列表
+// MenuActionResources
 type MenuActionResources []*MenuActionResource
 
-// ToSchemaMenuActionResources 转换为菜单动作关联资源对象列表
+// ToSchema MenuActionResources
 func (a MenuActionResources) ToSchemaMenuActionResources() []*schema.MenuActionResource {
 	list := make([]*schema.MenuActionResource, len(a))
 	for i, item := range a {

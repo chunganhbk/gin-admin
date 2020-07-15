@@ -2,41 +2,40 @@ package mongo
 
 import (
 	"context"
-
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/chunganhbk/gin-go/pkg/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// GetUserRoleCollection 获取UserRole存储
+// GetUserRoleCollection UserRole
 func GetUserRoleCollection(ctx context.Context, cli *mongo.Client) *mongo.Collection {
 	return GetCollection(ctx, cli, UserRole{})
 }
 
-// SchemaUserRole 用户角色
+// SchemaUserRole
 type SchemaUserRole schema.UserRole
 
-// ToUserRole 转换为角色菜单实体
+// ToUserRole
 func (a SchemaUserRole) ToUserRole() *UserRole {
 	item := new(UserRole)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// UserRole 用户角色关联实体
+// UserRole
 type UserRole struct {
 	Model  `bson:",inline"`
-	UserID string `bson:"user_id"` // 用户内码
-	RoleID string `bson:"role_id"` // 角色内码
+	UserID string `bson:"user_id"`
+	RoleID string `bson:"role_id"`
 }
 
-// CollectionName 集合名
+// CollectionName
 func (a UserRole) CollectionName() string {
 	return a.Model.CollectionName("user_role")
 }
 
-// CreateIndexes 创建索引
+// CreateIndexes
 func (a UserRole) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	return a.Model.CreateIndexes(ctx, cli, a, []mongo.IndexModel{
 		{Keys: bson.M{"user_id": 1}},
@@ -44,17 +43,17 @@ func (a UserRole) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	})
 }
 
-// ToSchemaUserRole 转换为用户角色对象
+// ToSchemaUserRole
 func (a UserRole) ToSchemaUserRole() *schema.UserRole {
 	item := new(schema.UserRole)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// UserRoles 用户角色关联列表
+// UserRoles
 type UserRoles []*UserRole
 
-// ToSchemaUserRoles 转换为用户角色对象列表
+// ToSchemaUserRoles
 func (a UserRoles) ToSchemaUserRoles() []*schema.UserRole {
 	list := make([]*schema.UserRole, len(a))
 	for i, item := range a {

@@ -2,26 +2,24 @@ package mock
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/google/wire"
+
 )
 
-// UserSet 注入User
-var UserSet = wire.NewSet(wire.Struct(new(User), "*"))
 
-// User 用户管理
+// User Management
 type User struct {
 }
 
-// Query 查询数据
-// @Tags 用户管理
-// @Summary 查询数据
+// Query data
+// @Tags User Management
+// @Summary Query data
 // @Security ApiKeyAuth
-// @Param current query int true "分页索引" default(1)
-// @Param pageSize query int true "分页大小" default(10)
-// @Param queryValue query string false "查询值"
-// @Param roleIDs query string false "角色ID(多个以英文逗号分隔)"
-// @Param status query int false "状态(1:启用 2:停用)"
-// @Success 200 {array} schema.UserShow "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Param current query int true "Page index" default(1)
+// @Param pageSize query int true "Page Size" default(10)
+// @Param queryValue query string false "Query value"
+// @Param roleIDs query string false "ID (multiple separated by commas)"
+// @Param status query int false "status(1:Enable 2:Disable)"
+// @Success 200 {array} schema.UserShow "search result：{list:List data,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 401 {object} schema.ErrorResult "{error:{code:0,message:未授权}}"
 // @Failure 500 {object} schema.ErrorResult "{error:{code:0,message:服务器错误}}"
 // @Router /api/v1/users [get]
@@ -103,4 +101,49 @@ func (a *User) Enable(c *gin.Context) {
 // @Failure 500 {object} schema.ErrorResult "{error:{code:0,message:服务器错误}}"
 // @Router /api/v1/users/{id}/disable [patch]
 func (a *User) Disable(c *gin.Context) {
+}
+// RefreshToken 刷新令牌
+// @Tags 登录管理
+// @Summary 刷新令牌
+// @Security ApiKeyAuth
+// @Success 200 {object} schema.LoginTokenInfo
+// @Failure 401 {object} schema.ErrorResult "{error:{code:0,message:未授权}}"
+// @Failure 500 {object} schema.ErrorResult "{error:{code:0,message:服务器错误}}"
+// @Router /api/v1/pub/refresh-token [post]
+func (a *User) RefreshToken(c *gin.Context) {
+}
+
+// GetUserInfo 获取当前用户信息
+// @Tags 登录管理
+// @Summary 获取当前用户信息
+// @Security ApiKeyAuth
+// @Success 200 {object} schema.UserLoginInfo
+// @Failure 401 {object} schema.ErrorResult "{error:{code:0,message:未授权}}"
+// @Failure 500 {object} schema.ErrorResult "{error:{code:0,message:服务器错误}}"
+// @Router /api/v1/pub/current/user [get]
+func (a *User) GetUserInfo(c *gin.Context) {
+}
+
+// QueryUserMenuTree 查询当前用户菜单树
+// @Tags 登录管理
+// @Summary 查询当前用户菜单树
+// @Security ApiKeyAuth
+// @Success 200 {object} schema.Menu "查询结果：{list:菜单树}"
+// @Failure 401 {object} schema.ErrorResult "{error:{code:0,message:未授权}}"
+// @Failure 500 {object} schema.ErrorResult "{error:{code:0,message:服务器错误}}"
+// @Router /api/v1/pub/current/menutree [get]
+func (a *User) QueryUserMenuTree(c *gin.Context) {
+}
+
+// UpdatePassword
+// @Tags Current User
+// @Summary Change personal password
+// @Security ApiKeyAuth
+// @Param body body schema.UpdatePasswordParam true "Request parameters"
+// @Success 200 {object} schema.StatusResult "{status:OK}"
+// @Failure 400 {object} schema.ErrorResult "{code:400, message:Invalid request parameter}"
+// @Failure 401 {object} schema.ErrorResult "{code:401, message:unauthorized}}"
+// @Failure 500 {object} schema.ErrorResult "{code:500, message:server error}}"
+// @Router /api/v1/pub/current/password [put]
+func (a *User) UpdatePassword(c *gin.Context) {
 }

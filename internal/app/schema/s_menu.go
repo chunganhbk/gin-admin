@@ -3,42 +3,41 @@ package schema
 import (
 	"strings"
 	"time"
-
 	"github.com/chunganhbk/gin-go/pkg/util"
 )
 
-// Menu 菜单对象
+// Menu
 type Menu struct {
-	ID         string      `json:"id"`                                         // 唯一标识
-	Name       string      `json:"name" binding:"required"`                    // 菜单名称
-	Sequence   int         `json:"sequence"`                                   // 排序值
-	Icon       string      `json:"icon"`                                       // 菜单图标
-	Router     string      `json:"router"`                                     // 访问路由
-	ParentID   string      `json:"parent_id"`                                  // 父级ID
-	ParentPath string      `json:"parent_path"`                                // 父级路径
-	ShowStatus int         `json:"show_status" binding:"required,max=2,min=1"` // 显示状态(1:显示 2:隐藏)
-	Status     int         `json:"status" binding:"required,max=2,min=1"`      // 状态(1:启用 2:禁用)
-	Memo       string      `json:"memo"`                                       // 备注
-	Creator    string      `json:"creator"`                                    // 创建者
-	CreatedAt  time.Time   `json:"created_at"`                                 // 创建时间
-	UpdatedAt  time.Time   `json:"updated_at"`                                 // 更新时间
-	Actions    MenuActions `json:"actions"`                                    // 动作列表
+	ID         string      `json:"id"`
+	Name       string      `json:"name" binding:"required"`
+	Order   int            `json:"order"`
+	Icon       string      `json:"icon"`
+	Router     string      `json:"router"`
+	ParentID   string      `json:"parent_id"`
+	ParentPath string      `json:"parent_path"`
+	ShowStatus int         `json:"show_status" binding:"required,max=2,min=1"` // status(1:enable 2:disable)
+	Status     int         `json:"status" binding:"required,max=2,min=1"`      // status(1:enable 2:disable)
+	Memo       string      `json:"memo"`                                       // remarks
+	Creator    string      `json:"creator"`                                    // create by
+	CreatedAt  time.Time   `json:"created_at"`
+	UpdatedAt  time.Time   `json:"updated_at"`
+	Actions    MenuActions `json:"actions"`
 }
 
 func (a *Menu) String() string {
 	return util.JSONMarshalToString(a)
 }
 
-// MenuQueryParam 查询条件
+// MenuQueryParam
 type MenuQueryParam struct {
 	PaginationParam
-	IDs              []string `form:"-"`          // 唯一标识列表
-	Name             string   `form:"-"`          // 菜单名称
-	PrefixParentPath string   `form:"-"`          // 父级路径(前缀模糊查询)
-	QueryValue       string   `form:"queryValue"` // 模糊查询
-	ParentID         *string  `form:"parentID"`   // 父级内码
-	ShowStatus       int      `form:"showStatus"` // 显示状态(1:显示 2:隐藏)
-	Status           int      `form:"status"`     // 状态(1:启用 2:禁用)
+	IDs              []string `form:"-"`
+	Name             string   `form:"-"`
+	PrefixParentPath string   `form:"-"`
+	QueryValue       string   `form:"queryValue"`
+	ParentID         *string  `form:"parentID"`
+	ShowStatus       int      `form:"showStatus"`
+	Status           int      `form:"status"`
 }
 
 // MenuQueryOptions 查询可选参数项
@@ -60,14 +59,14 @@ func (a Menus) Len() int {
 }
 
 func (a Menus) Less(i, j int) bool {
-	return a[i].Sequence > a[j].Sequence
+	return a[i].Order > a[j].Order
 }
 
 func (a Menus) Swap(i, j int) {
 	a[i], a[j] = a[j], a[i]
 }
 
-// ToMap 转换为键值映射
+// ToMap
 func (a Menus) ToMap() map[string]*Menu {
 	m := make(map[string]*Menu)
 	for _, item := range a {
@@ -76,7 +75,7 @@ func (a Menus) ToMap() map[string]*Menu {
 	return m
 }
 
-// SplitParentIDs 拆分父级路径的唯一标识列表
+// SplitParentIDs
 func (a Menus) SplitParentIDs() []string {
 	idList := make([]string, 0, len(a))
 	mIDList := make(map[string]struct{})
@@ -109,7 +108,7 @@ func (a Menus) ToTree() MenuTrees {
 			Router:     item.Router,
 			ParentID:   item.ParentID,
 			ParentPath: item.ParentPath,
-			Sequence:   item.Sequence,
+			Order:   item.Order,
 			ShowStatus: item.ShowStatus,
 			Status:     item.Status,
 			Actions:    item.Actions,
@@ -130,25 +129,25 @@ func (a Menus) FillMenuAction(mActions map[string]MenuActions) Menus {
 
 // ----------------------------------------MenuTree--------------------------------------
 
-// MenuTree 菜单树
+// MenuTree
 type MenuTree struct {
-	ID         string      `yaml:"-" json:"id"`                                  // 唯一标识
-	Name       string      `yaml:"name" json:"name"`                             // 菜单名称
-	Icon       string      `yaml:"icon" json:"icon"`                             // 菜单图标
-	Router     string      `yaml:"router,omitempty" json:"router"`               // 访问路由
-	ParentID   string      `yaml:"-" json:"parent_id"`                           // 父级ID
-	ParentPath string      `yaml:"-" json:"parent_path"`                         // 父级路径
-	Sequence   int         `yaml:"sequence" json:"sequence"`                     // 排序值
-	ShowStatus int         `yaml:"-" json:"show_status"`                         // 显示状态(1:显示 2:隐藏)
-	Status     int         `yaml:"-" json:"status"`                              // 状态(1:启用 2:禁用)
-	Actions    MenuActions `yaml:"actions,omitempty" json:"actions"`             // 动作列表
-	Children   *MenuTrees  `yaml:"children,omitempty" json:"children,omitempty"` // 子级树
+	ID         string      `yaml:"-" json:"id"`
+	Name       string      `yaml:"name" json:"name"`
+	Icon       string      `yaml:"icon" json:"icon"`
+	Router     string      `yaml:"router,omitempty" json:"router"`
+	ParentID   string      `yaml:"-" json:"parent_id"`
+	ParentPath string      `yaml:"-" json:"parent_path"`
+	Order      int         `yaml:"order" json:"order"`
+	ShowStatus int         `yaml:"-" json:"show_status"`
+	Status     int         `yaml:"-" json:"status"`
+	Actions    MenuActions `yaml:"actions,omitempty" json:"actions"`
+	Children   *MenuTrees  `yaml:"children,omitempty" json:"children,omitempty"`
 }
 
-// MenuTrees 菜单树列表
+// Menu tree list
 type MenuTrees []*MenuTree
 
-// ToTree 转换为树形结构
+// ToTree Convert to tree structure
 func (a MenuTrees) ToTree() MenuTrees {
 	mi := make(map[string]*MenuTree)
 	for _, item := range a {
@@ -175,37 +174,37 @@ func (a MenuTrees) ToTree() MenuTrees {
 
 // ----------------------------------------MenuAction--------------------------------------
 
-// MenuAction 菜单动作对象
+// MenuAction
 type MenuAction struct {
-	ID        string              `yaml:"-" json:"id"`                          // 唯一标识
-	MenuID    string              `yaml:"-" binding:"required" json:"menu_id"`  // 菜单ID
-	Code      string              `yaml:"code" binding:"required" json:"code"`  // 动作编号
-	Name      string              `yaml:"name" binding:"required" json:"name"`  // 动作名称
-	Resources MenuActionResources `yaml:"resources,omitempty" json:"resources"` // 资源列表
+	ID        string              `yaml:"-" json:"id"`
+	MenuID    string              `yaml:"-" binding:"required" json:"menu_id"`
+	Code      string              `yaml:"code" binding:"required" json:"code"`
+	Name      string              `yaml:"name" binding:"required" json:"name"`
+	Resources MenuActionResources `yaml:"resources,omitempty" json:"resources"`
 }
 
-// MenuActionQueryParam 查询条件
+// MenuActionQueryParam
 type MenuActionQueryParam struct {
 	PaginationParam
-	MenuID string   // 菜单ID
-	IDs    []string // 唯一标识列表
+	MenuID string
+	IDs    []string
 }
 
-// MenuActionQueryOptions 查询可选参数项
+// MenuAction Query Options
 type MenuActionQueryOptions struct {
-	OrderFields []*OrderField // 排序字段
+	OrderFields []*OrderField
 }
 
-// MenuActionQueryResult 查询结果
+// MenuActionQueryResult
 type MenuActionQueryResult struct {
 	Data       MenuActions
 	PageResult *PaginationResult
 }
 
-// MenuActions 菜单动作管理列表
+// MenuActions
 type MenuActions []*MenuAction
 
-// ToMap 转换为map
+// ToMap map
 func (a MenuActions) ToMap() map[string]*MenuAction {
 	m := make(map[string]*MenuAction)
 	for _, item := range a {
@@ -214,14 +213,14 @@ func (a MenuActions) ToMap() map[string]*MenuAction {
 	return m
 }
 
-// FillResources 填充资源数据
+// FillResources
 func (a MenuActions) FillResources(mResources map[string]MenuActionResources) {
 	for i, item := range a {
 		a[i].Resources = mResources[item.ID]
 	}
 }
 
-// ToMenuIDMap 转换为菜单ID映射
+// ToMenuIDMap
 func (a MenuActions) ToMenuIDMap() map[string]MenuActions {
 	m := make(map[string]MenuActions)
 	for _, item := range a {
@@ -232,36 +231,36 @@ func (a MenuActions) ToMenuIDMap() map[string]MenuActions {
 
 // ----------------------------------------MenuActionResource--------------------------------------
 
-// MenuActionResource 菜单动作关联资源对象
+// MenuActionResource
 type MenuActionResource struct {
-	ID       string `yaml:"-" json:"id"`                             // 唯一标识
-	ActionID string `yaml:"-" json:"action_id"`                      // 菜单动作ID
-	Method   string `yaml:"method" binding:"required" json:"method"` // 资源请求方式(支持正则)
-	Path     string `yaml:"path" binding:"required" json:"path"`     // 资源请求路径（支持/:id匹配）
+	ID       string `yaml:"-" json:"id"`
+	ActionID string `yaml:"-" json:"action_id"`
+	Method   string `yaml:"method" binding:"required" json:"method"`
+	Path     string `yaml:"path" binding:"required" json:"path"`
 }
 
-// MenuActionResourceQueryParam 查询条件
+// Menu Action Resource Query Param
 type MenuActionResourceQueryParam struct {
 	PaginationParam
-	MenuID  string   // 菜单ID
-	MenuIDs []string // 菜单ID列表
+	MenuID  string
+	MenuIDs []string
 }
 
-// MenuActionResourceQueryOptions 查询可选参数项
+// Menu Action Resource Query Options
 type MenuActionResourceQueryOptions struct {
-	OrderFields []*OrderField // 排序字段
+	OrderFields []*OrderField
 }
 
-// MenuActionResourceQueryResult 查询结果
+// MenuAction Resource QueryResult
 type MenuActionResourceQueryResult struct {
 	Data       MenuActionResources
 	PageResult *PaginationResult
 }
 
-// MenuActionResources 菜单动作关联资源管理列表
+// MenuAction Resources
 type MenuActionResources []*MenuActionResource
 
-// ToMap 转换为map
+// ToMap
 func (a MenuActionResources) ToMap() map[string]*MenuActionResource {
 	m := make(map[string]*MenuActionResource)
 	for _, item := range a {
@@ -270,7 +269,7 @@ func (a MenuActionResources) ToMap() map[string]*MenuActionResource {
 	return m
 }
 
-// ToActionIDMap 转换为动作ID映射
+// Convert to action ID mapping
 func (a MenuActionResources) ToActionIDMap() map[string]MenuActionResources {
 	m := make(map[string]MenuActionResources)
 	for _, item := range a {

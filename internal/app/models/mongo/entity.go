@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/chunganhbk/gin-go/internal/app/config"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -23,17 +22,17 @@ func (Model) CollectionName(name string) string {
 	return fmt.Sprintf("%s%s", config.C.Mongo.CollectionPrefix, name)
 }
 
-// CreateIndexes 创建索引
+// CreateIndexes
 func (Model) CreateIndexes(ctx context.Context, cli *mongo.Client, m Collectioner, indexes []mongo.IndexModel) error {
-	models := []mongo.IndexModel{
+	/*models := []mongo.IndexModel{
 		{Keys: bson.M{"created_at": 1}},
 		{Keys: bson.M{"updated_at": 1}},
 		{Keys: bson.M{"deleted_at": 1}},
 	}
 	if len(indexes) > 0 {
 		models = append(models, indexes...)
-	}
-	_, err := GetCollection(ctx, cli, m).Indexes().CreateMany(ctx, models)
+	}*/
+	_, err := GetCollection(ctx, cli, m).Indexes().CreateMany(ctx, indexes)
 	return err
 }
 

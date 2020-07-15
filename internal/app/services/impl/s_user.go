@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"fmt"
 	"github.com/chunganhbk/gin-go/internal/app/repositories"
 	"github.com/chunganhbk/gin-go/internal/app/iutil"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
@@ -101,6 +102,7 @@ func (u *UserService) Create(ctx context.Context, item schema.User) (*schema.IDR
 	}
 
 	item.Password = util.BcryptPwd(item.Password)
+	item.FullName = fmt.Sprintf("%s %s", item.FirstName, item.LastName);
 	item.ID = iutil.NewID()
 	err = ExecTrans(ctx, u.TransRp, func(ctx context.Context) error {
 		for _, urItem := range item.UserRoles {
@@ -132,7 +134,7 @@ func (u *UserService) checkEmail(ctx context.Context, item schema.User) error {
 	if err != nil {
 		return err
 	} else if result.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_EXIST_EMAIL)
+		return app.New400Response(app.ERROR_EXIST_EMAIL, nil)
 	}
 	return nil
 }
@@ -254,9 +256,9 @@ func (u *UserService) checkAndGetUser(ctx context.Context, userID string) (*sche
 	if err != nil {
 		return nil, err
 	} else if user == nil {
-		return nil, app.New400Response(app.ERROR_NOT_EXIST_USER)
+		return nil, app.New400Response(app.ERROR_NOT_EXIST_USER, nil)
 	} else if user.Status != 1 {
-		return nil, app.New400Response(app.ERROR_USER_DISABLED)
+		return nil, app.New400Response(app.ERROR_USER_DISABLED, nil)
 	}
 	return user, nil
 }
@@ -364,7 +366,7 @@ func (u *UserService) ChangePassword(ctx context.Context, userID string, params 
 	if err != nil {
 		return err
 	} else if util.ComparePasswords(user.Password, params.OldPassword) {
-		return app.New400Response(app.ERROR_INVALID_OLD_PASS)
+		return app.New400Response(app.ERROR_INVALID_OLD_PASS, nil)
 	}
 
 	params.NewPassword = util.BcryptPwd(params.NewPassword)

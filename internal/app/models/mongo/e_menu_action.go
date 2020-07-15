@@ -2,59 +2,58 @@ package mongo
 
 import (
 	"context"
-
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/chunganhbk/gin-go/pkg/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// GetMenuActionCollection 获取MenuAction存储
+// GetMenuActionCollection MenuAction
 func GetMenuActionCollection(ctx context.Context, cli *mongo.Client) *mongo.Collection {
 	return GetCollection(ctx, cli, MenuAction{})
 }
 
-// SchemaMenuAction 菜单动作
+// SchemaMenuAction
 type SchemaMenuAction schema.MenuAction
 
-// ToMenuAction 转换为菜单动作实体
+// ToMenuAction
 func (a SchemaMenuAction) ToMenuAction() *MenuAction {
 	item := new(MenuAction)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// MenuAction 菜单动作实体
+// MenuAction
 type MenuAction struct {
 	Model  `bson:",inline"`
-	MenuID string `bson:"menu_id"` // 菜单ID
-	Code   string `bson:"code"`    // 动作编号
-	Name   string `bson:"name"`    // 动作名称
+	MenuID string `bson:"menu_id"` // ID
+	Code   string `bson:"code"`
+	Name   string `bson:"name"`
 }
 
-// CollectionName 集合名
+// CollectionName
 func (a MenuAction) CollectionName() string {
 	return a.Model.CollectionName("menu_action")
 }
 
-// CreateIndexes 创建索引
+// CreateIndexes
 func (a MenuAction) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	return a.Model.CreateIndexes(ctx, cli, a, []mongo.IndexModel{
 		{Keys: bson.M{"menu_id": 1}},
 	})
 }
 
-// ToSchemaMenuAction 转换为菜单动作对象
+// ToSchemaMenuAction
 func (a MenuAction) ToSchemaMenuAction() *schema.MenuAction {
 	item := new(schema.MenuAction)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// MenuActions 菜单动作列表
+// MenuActions
 type MenuActions []*MenuAction
 
-// ToSchemaMenuActions 转换为菜单动作对象列表
+// ToSchemaMenuActions
 func (a MenuActions) ToSchemaMenuActions() []*schema.MenuAction {
 	list := make([]*schema.MenuAction, len(a))
 	for i, item := range a {

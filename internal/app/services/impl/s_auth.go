@@ -31,14 +31,14 @@ func (a *AuthService) Verify(ctx context.Context, email string, password string)
 	if err != nil {
 		return nil, err
 	} else if len(result.Data) == 0 {
-		return nil, app.NewResponse(app.ERROR_LOGIN_FAILED, app.INVALID_PARAMS)
+		return nil, app.NewResponse(app.ERROR_LOGIN_FAILED, app.INVALID_PARAMS, nil)
 	}
 
 	item := result.Data[0]
 	if util.ComparePasswords(password, item.Password) {
-		return nil, app.NewResponse(app.ERROR_LOGIN_FAILED, app.INVALID_PARAMS)
+		return nil, app.NewResponse(app.ERROR_LOGIN_FAILED, app.INVALID_PARAMS, nil)
 	} else if item.Status != 1 {
-		return nil, app.NewResponse(app.ERROR_USER_DISABLED, app.INVALID_PARAMS)
+		return nil, app.NewResponse(app.ERROR_USER_DISABLED, app.INVALID_PARAMS, nil)
 	}
 
 	return item, nil

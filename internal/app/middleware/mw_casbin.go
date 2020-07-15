@@ -20,7 +20,6 @@ func CasbinMiddleware(enforcer *casbin.SyncedEnforcer, skippers ...SkipperFunc) 
 			c.Next()
 			return
 		}
-
 		p := c.Request.URL.Path
 		m := c.Request.Method
 		if b, err := enforcer.Enforce(app.GetUserID(c), p, m); err != nil {

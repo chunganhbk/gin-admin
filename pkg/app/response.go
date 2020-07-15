@@ -10,14 +10,14 @@ import (
 type Response struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
-	ERR  error       `json:"err"`
+	Data interface{} `json:"data,omitempty"`
+	ERR  error       `json:"err,omitempty"`
 }
 const (
 	SUCCESS                        = 200
 	ERROR                          = 500
 	INVALID_PARAMS                 = 400
-	ERROR_BAD_REQUEST              = 401
+	ERROR_BAD_REQUEST              = 421
 	ERROR_NO_PERRMISSION           = 403
 	ERROR_NOT_FOUND                = 404
 	ERROR_METHOD_NOT_ALLOW         = 405
@@ -34,15 +34,16 @@ const (
 	ERROR_PASSWORD_REQUIRED        = 424
 	ERROR_TOO_MANY_REQUEST         = 429
 	ERROR_INTERNAL_SERVER          = 512
-	ERROR_AUTH_CHECK_TOKEN_FAIL    = 20001
-	ERROR_AUTH_CHECK_TOKEN_TIMEOUT = 20002
-	ERROR_AUTH_TOKEN               = 20003
-	ERROR_AUTH                     = 20004
-	ERROR_EXIST_EMAIL              = 30001
+	ERROR_AUTH_CHECK_TOKEN_FAIL    = 401
+	ERROR_AUTH_CHECK_TOKEN_TIMEOUT = 402
+	ERROR_AUTH_TOKEN               = 408
+	ERROR_AUTH                     = 407
+	ERROR_EXIST_EMAIL              = 430
 )
 
 func ResError(c *gin.Context, err error, status ...int) {
 	ctx := c.Request.Context()
+	println("err", &err, err)
 	var res *ResponseError
 	if err != nil {
 		if e, ok := err.(*ResponseError); ok {
@@ -87,13 +88,18 @@ func ResOK(c *gin.Context){
 	ResSuccess(c, nil)
 }
 func ResJSON(c *gin.Context, httpCode, errCode int, data interface{}, err error) {
-	msg := GetMsg(errCode)
-	if httpCode == http.StatusBadRequest{
-		msg = fmt.Sprintf(msg, err.Error())
+
+	if httpCode >= http.StatusBadRequest && httpCode < http.StatusInternalServerError{
+		c.JSON(httpCode, Response{
+			Code: errCode,
+			Msg:  fmt.Sprintf(GetMsg(errCode), err.Error()),
+			Data: data,
+		})
+		return
 	}
 	c.JSON(httpCode, Response{
 		Code: errCode,
-		Msg:  msg,
+		Msg: GetMsg(errCode),
 		Data: data,
 		ERR:  err,
 	})

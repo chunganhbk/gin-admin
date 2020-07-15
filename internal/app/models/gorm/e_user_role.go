@@ -22,7 +22,7 @@ func (a SchemaUserRole) ToUserRole() *UserRole {
 	return item
 }
 
-// UserRole 用户角色关联实体
+// UserRole
 type UserRole struct {
 	Model
 	UserID string `gorm:"column:user_id;size:36;index;default:'';not null;"`

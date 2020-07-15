@@ -2,28 +2,27 @@ package gorm
 
 import (
 	"context"
-
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/chunganhbk/gin-go/pkg/util"
 	"github.com/jinzhu/gorm"
 )
 
-// GetMenuActionResourceDB 菜单动作关联资源
+// GetMenuActionResourceDB
 func GetMenuActionResourceDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
 	return GetDBWithModel(ctx, defDB, new(MenuActionResource))
 }
 
-// SchemaMenuActionResource 菜单动作关联资源
+// SchemaMenuActionResource
 type SchemaMenuActionResource schema.MenuActionResource
 
-// ToMenuActionResource 转换为菜单动作关联资源实体
+// ToMenuActionResource
 func (a SchemaMenuActionResource) ToMenuActionResource() *MenuActionResource {
 	item := new(MenuActionResource)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// MenuActionResource 菜单动作关联资源实体
+// MenuActionResource
 type MenuActionResource struct {
 	Model
 	ActionID string `gorm:"column:action_id;size:36;index;default:'';not null;"`

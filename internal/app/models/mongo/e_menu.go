@@ -2,14 +2,13 @@ package mongo
 
 import (
 	"context"
-
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/chunganhbk/gin-go/pkg/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// GetMenuCollection 获取Menu存储
+// GetMenuCollection
 func GetMenuCollection(ctx context.Context, cli *mongo.Client) *mongo.Collection {
 	return GetCollection(ctx, cli, Menu{})
 }
@@ -27,24 +26,24 @@ func (a SchemaMenu) ToMenu() *Menu {
 // Menu 菜单实体
 type Menu struct {
 	Model      `bson:",inline"`
-	Name       string `bson:"name"`        // 菜单名称
-	Sequence   int    `bson:"sequence"`    // 排序值
-	Icon       string `bson:"icon"`        // 菜单图标
-	Router     string `bson:"router"`      // 访问路由
-	ParentID   string `bson:"parent_id"`   // 父级内码
-	ParentPath string `bson:"parent_path"` // 父级路径
-	ShowStatus int    `bson:"show_status"` // 状态(1:显示 2:隐藏)
-	Status     int    `bson:"status"`      // 状态(1:启用 2:禁用)
-	Memo       string `bson:"memo"`        // 备注
-	Creator    string `bson:"creator"`     // 创建人
+	Name       string `bson:"name"`
+	Order      int    `bson:"order"`
+	Icon       string `bson:"icon"`
+	Router     string `bson:"router"`
+	ParentID   string `bson:"parent_id"`
+	ParentPath string `bson:"parent_path"`
+	ShowStatus int    `bson:"show_status"`
+	Status     int    `bson:"status"`
+	Memo       string `bson:"memo"`
+	Creator    string `bson:"creator"`
 }
 
-// CollectionName 集合名
+// CollectionName
 func (a Menu) CollectionName() string {
 	return a.Model.CollectionName("menu")
 }
 
-// CreateIndexes 创建索引
+// CreateIndexes
 func (a Menu) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	return a.Model.CreateIndexes(ctx, cli, a, []mongo.IndexModel{
 		{Keys: bson.M{"name": 1}},
@@ -56,17 +55,17 @@ func (a Menu) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	})
 }
 
-// ToSchemaMenu 转换为菜单对象
+// ToSchemaMenu
 func (a Menu) ToSchemaMenu() *schema.Menu {
 	item := new(schema.Menu)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// Menus 菜单实体列表
+// Menus
 type Menus []*Menu
 
-// ToSchemaMenus 转换为菜单对象列表
+// ToSchemaMenus
 func (a Menus) ToSchemaMenus() []*schema.Menu {
 	list := make([]*schema.Menu, len(a))
 	for i, item := range a {

@@ -32,7 +32,7 @@ func SetUserID(c *gin.Context, userID string) {
 }
 func ParseJSON(c *gin.Context, obj interface{}) error {
 	if err := c.ShouldBindJSON(obj); err != nil {
-		return New400Response(INVALID_PARAMS)
+		return New400Response(INVALID_PARAMS, err)
 	}
 	return nil
 }
@@ -40,7 +40,7 @@ func ParseJSON(c *gin.Context, obj interface{}) error {
 // Parse Query
 func ParseQuery(c *gin.Context, obj interface{}) error {
 	if err := c.ShouldBindQuery(obj); err != nil {
-		return New400Response(INVALID_PARAMS)
+		return New400Response(INVALID_PARAMS, err)
 	}
 	return nil
 }
@@ -48,7 +48,7 @@ func ParseQuery(c *gin.Context, obj interface{}) error {
 // Parse Form
 func ParseForm(c *gin.Context, obj interface{}) error {
 	if err := c.ShouldBindWith(obj, binding.Form); err != nil {
-		return New400Response(INVALID_PARAMS)
+		return New400Response(INVALID_PARAMS, err)
 	}
 	return nil
 }

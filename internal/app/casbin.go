@@ -5,7 +5,6 @@ import (
 	"github.com/chunganhbk/gin-go/internal/app/repositories"
 	"go.uber.org/dig"
 	"time"
-
 	"github.com/casbin/casbin/v2"
 	"github.com/chunganhbk/gin-go/internal/app/config"
 )

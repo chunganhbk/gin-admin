@@ -94,7 +94,7 @@ func (a *User) Create(c *gin.Context) {
 		app.ResError(c, err)
 		return
 	} else if item.Password == "" {
-		app.ResError(c, app.New400Response(app.ERROR_PASSWORD_REQUIRED))
+		app.ResError(c, app.New400Response(app.ERROR_PASSWORD_REQUIRED, nil))
 		return
 	}
 

@@ -10,7 +10,9 @@ import (
 // User
 type User struct {
 	ID        string    `json:"id"`
-	FullName  string    `json:"full_name" binding:"required"`
+	FirstName string    `json:"first_name" binding:"required"`
+	LastName  string    `json:"last_name" binding:"required"`
+	FullName  string    `json:"full_name"`
 	Password  string    `json:"password"`
 	Phone     string    `json:"phone"`
 	Email     string    `json:"email"`
@@ -149,7 +151,7 @@ func (a UserRoles) ToUserIDMap() map[string]UserRoles {
 // UserShow
 type UserShow struct {
 	ID        string    `json:"id"`
-	FullName  string    `json:"real_name"`
+	FullName  string    `json:"full_name"`
 	Phone     string    `json:"phone"`
 	Email     string    `json:"email"`
 	Status    int       `json:"status"`

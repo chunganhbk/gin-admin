@@ -93,7 +93,7 @@ func (r *RoleService) checkName(ctx context.Context, item schema.Role) error {
 	if err != nil {
 		return err
 	} else if result.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_EXIST_ROLE)
+		return app.New400Response(app.ERROR_EXIST_ROLE, nil)
 	}
 	return nil
 }
@@ -176,7 +176,7 @@ func (r *RoleService) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	} else if userResult.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_EXIST_ROLE_USER)
+		return app.New400Response(app.ERROR_EXIST_ROLE_USER, nil)
 	}
 
 	err = ExecTrans(ctx, r.TransRp, func(ctx context.Context) error {

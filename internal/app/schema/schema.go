@@ -19,13 +19,10 @@ type StatusResult struct {
 	Status StatusText `json:"status"`
 }
 
-// ErrorResult
-type ErrorResult struct {
-	Error ErrorItem `json:"error"`
-}
+
 
 // ErrorItem
-type ErrorItem struct {
+type ErrorResult struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }

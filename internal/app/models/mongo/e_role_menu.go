@@ -9,35 +9,35 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// GetRoleMenuCollection 获取RoleMenu存储
+// GetRoleMenuCollection RoleMenu
 func GetRoleMenuCollection(ctx context.Context, cli *mongo.Client) *mongo.Collection {
 	return GetCollection(ctx, cli, RoleMenu{})
 }
 
-// SchemaRoleMenu 角色菜单
+// SchemaRoleMenu
 type SchemaRoleMenu schema.RoleMenu
 
-// ToRoleMenu 转换为角色菜单实体
+// ToRoleMenu
 func (a SchemaRoleMenu) ToRoleMenu() *RoleMenu {
 	item := new(RoleMenu)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// RoleMenu 角色菜单实体
+// RoleMenu
 type RoleMenu struct {
 	Model    `bson:",inline"`
-	RoleID   string `bson:"role_id"`   // 角色ID
-	MenuID   string `bson:"menu_id"`   // 菜单ID
-	ActionID string `bson:"action_id"` // 动作ID
+	RoleID   string `bson:"role_id"`
+	MenuID   string `bson:"menu_id"`
+	ActionID string `bson:"action_id"`
 }
 
-// CollectionName 集合名
+// CollectionName
 func (a RoleMenu) CollectionName() string {
 	return a.Model.CollectionName("role_menu")
 }
 
-// CreateIndexes 创建索引
+// CreateIndexes
 func (a RoleMenu) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	return a.Model.CreateIndexes(ctx, cli, a, []mongo.IndexModel{
 		{Keys: bson.M{"role_id": 1}},
@@ -46,17 +46,17 @@ func (a RoleMenu) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	})
 }
 
-// ToSchemaRoleMenu 转换为角色菜单对象
+// ToSchema RoleMenu
 func (a RoleMenu) ToSchemaRoleMenu() *schema.RoleMenu {
 	item := new(schema.RoleMenu)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// RoleMenus 角色菜单列表
+// RoleMenus
 type RoleMenus []*RoleMenu
 
-// ToSchemaRoleMenus 转换为角色菜单对象列表
+// ToSchema RoleMenus
 func (a RoleMenus) ToSchemaRoleMenus() []*schema.RoleMenu {
 	list := make([]*schema.RoleMenu, len(a))
 	for i, item := range a {

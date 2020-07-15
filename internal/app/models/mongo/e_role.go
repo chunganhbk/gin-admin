@@ -9,37 +9,37 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// GetRoleCollection 获取Role存储
+// GetRoleCollection Role
 func GetRoleCollection(ctx context.Context, cli *mongo.Client) *mongo.Collection {
 	return GetCollection(ctx, cli, Role{})
 }
 
-// SchemaRole 角色对象
+// SchemaRole
 type SchemaRole schema.Role
 
-// ToRole 转换为角色实体
+// ToRole
 func (a SchemaRole) ToRole() *Role {
 	item := new(Role)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// Role 角色实体
+// Role
 type Role struct {
 	Model    `bson:",inline"`
-	Name     string `bson:"name"`     // 角色名称
-	Sequence int    `bson:"sequence"` // 排序值
-	Memo     string `bson:"memo"`     // 备注
-	Status   int    `bson:"status"`   // 状态(1:启用 2:禁用)
-	Creator  string `bson:"creator"`  // 创建者
+	Name     string `bson:"name"`
+	Order    int    `bson:"order"`
+	Memo     string `bson:"memo"`
+	Status   int    `bson:"status"`
+	Creator  string `bson:"creator"`
 }
 
-// CollectionName 集合名
+// CollectionName role
 func (a Role) CollectionName() string {
 	return a.Model.CollectionName("role")
 }
 
-// CreateIndexes 创建索引
+// CreateIndexes
 func (a Role) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	return a.Model.CreateIndexes(ctx, cli, a, []mongo.IndexModel{
 		{Keys: bson.M{"name": 1}},
@@ -48,17 +48,17 @@ func (a Role) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	})
 }
 
-// ToSchemaRole 转换为角色对象
+// ToSchema Role
 func (a Role) ToSchemaRole() *schema.Role {
 	item := new(schema.Role)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// Roles 角色实体列表
+// Roles
 type Roles []*Role
 
-// ToSchemaRoles 转换为角色对象列表
+// ToSchema Roles
 func (a Roles) ToSchemaRoles() []*schema.Role {
 	list := make([]*schema.Role, len(a))
 	for i, item := range a {

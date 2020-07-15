@@ -12,9 +12,9 @@ import (
 // Model base models
 type Model struct {
 	ID        string     `gorm:"column:id;primary_key;size:36;"`
-	CreatedAt time.Time  `gorm:"column:created_at;index;"`
-	UpdatedAt time.Time  `gorm:"column:updated_at;index;"`
-	DeletedAt *time.Time `gorm:"column:deleted_at;index;"`
+	CreatedAt time.Time  `gorm:"column:created_at;"`
+	UpdatedAt time.Time  `gorm:"column:updated_at;"`
+	DeletedAt *time.Time `gorm:"column:deleted_at;"`
 }
 
 // GetDB ...

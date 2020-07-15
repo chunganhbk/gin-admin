@@ -30,7 +30,7 @@ func RegisterAPI(r *gin.Engine, container *dig.Container) error {
 		))
 
 		g.Use(middleware.CasbinMiddleware(e,
-			middleware.AllowPathPrefixSkipper("/api/v1/auth"),
+			middleware.AllowPathPrefixSkipper("/api/v1/pub", "/api/v1/auth"),
 		))
 
 		v1 := g.Group("/v1")
@@ -41,7 +41,7 @@ func RegisterAPI(r *gin.Engine, container *dig.Container) error {
 				auth.POST("/register", cAuth.Register)
 
 			}
-			gCurrent := v1.Group("current")
+			gCurrent := v1.Group("pub") //public api
 			{
 				gCurrent.PUT("password", cUser.ChangePassword)
 				gCurrent.GET("user", cUser.GetUserInfo)

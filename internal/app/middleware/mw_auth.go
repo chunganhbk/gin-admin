@@ -16,7 +16,7 @@ func wrapUserAuthContext(c *gin.Context, userID string) {
 	c.Request = c.Request.WithContext(ctx)
 }
 
-// UserAuthMiddleware
+// User Auth Middleware
 func UserAuthMiddleware(a jwt.IJWTAuth, skippers ...SkipperFunc) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
@@ -28,8 +28,7 @@ func UserAuthMiddleware(a jwt.IJWTAuth, skippers ...SkipperFunc) gin.HandlerFunc
 		userID, err := a.ParseUserID(app.GetToken(c))
 		if err != nil {
 			if err == jwt.ErrInvalidToken {
-
-				app.ResError(c, app.New400Response(app.ERROR_AUTH_CHECK_TOKEN_FAIL))
+				app.ResError(c, app.NewStatusUnauthorized(app.ERROR_AUTH_CHECK_TOKEN_FAIL))
 				return
 			}
 			app.ResError(c, errors.WithStack(err))
