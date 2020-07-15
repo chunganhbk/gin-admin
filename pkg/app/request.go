@@ -9,7 +9,9 @@ const (
 	prefix = "gin-go"
 	// UserIDKey
 	UserIDKey = prefix + "/user-id"
-
+	ReqBodyKey       = prefix + "/req-body"
+	ResBodyKey       = prefix + "/res-body"
+	LoggerReqBodyKey = prefix + "/logger-req-body"
 )
 func GetToken(c *gin.Context) string {
 	var token string

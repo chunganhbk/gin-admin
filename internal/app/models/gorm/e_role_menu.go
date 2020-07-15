@@ -2,51 +2,46 @@ package gorm
 
 import (
 	"context"
-
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/chunganhbk/gin-go/pkg/util"
 	"github.com/jinzhu/gorm"
 )
 
-// GetRoleMenuDB 角色菜单
+// GetRoleMenuDB
 func GetRoleMenuDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
 	return GetDBWithModel(ctx, defDB, new(RoleMenu))
 }
 
-// SchemaRoleMenu 角色菜单
+// SchemaRoleMenu
 type SchemaRoleMenu schema.RoleMenu
 
-// ToRoleMenu 转换为角色菜单实体
+// ToRoleMenu
 func (a SchemaRoleMenu) ToRoleMenu() *RoleMenu {
 	item := new(RoleMenu)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// RoleMenu 角色菜单实体
+// RoleMenu
 type RoleMenu struct {
 	Model
-	RoleID   string `gorm:"column:role_id;size:36;index;default:'';not null;"`   // 角色ID
-	MenuID   string `gorm:"column:menu_id;size:36;index;default:'';not null;"`   // 菜单ID
-	ActionID string `gorm:"column:action_id;size:36;index;default:'';not null;"` // 动作ID
+	RoleID   string `gorm:"column:role_id;size:36;index;default:'';not null;"`
+	MenuID   string `gorm:"column:menu_id;size:36;index;default:'';not null;"`
+	ActionID string `gorm:"column:action_id;size:36;default:'';not null;"`
 }
 
-// TableName 表名
-func (a RoleMenu) TableName() string {
-	return a.Model.TableName("role_menu")
-}
 
-// ToSchemaRoleMenu 转换为角色菜单对象
+// To Schema RoleMenu
 func (a RoleMenu) ToSchemaRoleMenu() *schema.RoleMenu {
 	item := new(schema.RoleMenu)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// RoleMenus 角色菜单列表
+// Role Menus
 type RoleMenus []*RoleMenu
 
-// ToSchemaRoleMenus 转换为角色菜单对象列表
+// To Schema RoleMenus
 func (a RoleMenus) ToSchemaRoleMenus() []*schema.RoleMenu {
 	list := make([]*schema.RoleMenu, len(a))
 	for i, item := range a {

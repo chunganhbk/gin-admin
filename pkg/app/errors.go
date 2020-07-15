@@ -37,6 +37,9 @@ func New400Response(code int) error {
 func NoPermissionResponse() error {
 	return NewResponse(ERROR_NO_PERRMISSION, ERROR_NO_PERRMISSION)
 }
+func MethodNotAllowResponse() error{
+	return NewResponse(ERROR_METHOD_NOT_ALLOW, ERROR_METHOD_NOT_ALLOW)
+}
 var (
 	New          = errors.New
 	Wrap         = errors.Wrap

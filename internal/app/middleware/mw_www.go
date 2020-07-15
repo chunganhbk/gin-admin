@@ -3,7 +3,6 @@ package middleware
 import (
 	"os"
 	"path/filepath"
-
 	"github.com/gin-gonic/gin"
 )
 

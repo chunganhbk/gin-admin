@@ -2,11 +2,12 @@ package gorm
 
 import (
 	"context"
+	entity "github.com/chunganhbk/gin-go/internal/app/models/gorm"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 )
-// MenuActionResource
+// Menu Action Resource
 type MenuActionResource struct {
 	DB *gorm.DB
 }
@@ -23,7 +24,7 @@ func (a *MenuActionResource) getQueryOption(opts ...schema.MenuActionResourceQue
 	return opt
 }
 
-// Query 查询数据
+// Query
 func (a *MenuActionResource) Query(ctx context.Context, params schema.MenuActionResourceQueryParam, opts ...schema.MenuActionResourceQueryOptions) (*schema.MenuActionResourceQueryResult, error) {
 	opt := a.getQueryOption(opts...)
 
@@ -56,7 +57,7 @@ func (a *MenuActionResource) Query(ctx context.Context, params schema.MenuAction
 	return qr, nil
 }
 
-// Get 查询指定数据
+// Get menu action resource
 func (a *MenuActionResource) Get(ctx context.Context, id string, opts ...schema.MenuActionResourceQueryOptions) (*schema.MenuActionResource, error) {
 	db := entity.GetMenuActionResourceDB(ctx, a.DB).Where("id=?", id)
 	var item entity.MenuActionResource
@@ -70,33 +71,33 @@ func (a *MenuActionResource) Get(ctx context.Context, id string, opts ...schema.
 	return item.ToSchemaMenuActionResource(), nil
 }
 
-// Create 创建数据
+// Create menu action resource
 func (a *MenuActionResource) Create(ctx context.Context, item schema.MenuActionResource) error {
 	eitem := entity.SchemaMenuActionResource(item).ToMenuActionResource()
 	result := entity.GetMenuActionResourceDB(ctx, a.DB).Create(eitem)
 	return errors.WithStack(result.Error)
 }
 
-// Update 更新数据
+// Update  menu action resource
 func (a *MenuActionResource) Update(ctx context.Context, id string, item schema.MenuActionResource) error {
 	eitem := entity.SchemaMenuActionResource(item).ToMenuActionResource()
 	result := entity.GetMenuActionResourceDB(ctx, a.DB).Where("id=?", id).Updates(eitem)
 	return errors.WithStack(result.Error)
 }
 
-// Delete 删除数据
+// Delete  menu action resource
 func (a *MenuActionResource) Delete(ctx context.Context, id string) error {
 	result := entity.GetMenuActionResourceDB(ctx, a.DB).Where("id=?", id).Delete(entity.MenuActionResource{})
 	return errors.WithStack(result.Error)
 }
 
-// DeleteByActionID 根据动作ID删除数据
+// DeleteByActionID  menu action resource据
 func (a *MenuActionResource) DeleteByActionID(ctx context.Context, actionID string) error {
 	result := entity.GetMenuActionResourceDB(ctx, a.DB).Where("action_id =?", actionID).Delete(entity.MenuActionResource{})
 	return errors.WithStack(result.Error)
 }
 
-// DeleteByMenuID 根据菜单ID删除数据
+// Delete By MenuID  menu action resource
 func (a *MenuActionResource) DeleteByMenuID(ctx context.Context, menuID string) error {
 	subQuery := entity.GetMenuActionDB(ctx, a.DB).Where("menu_id=?", menuID).Select("id").SubQuery()
 	result := entity.GetMenuActionResourceDB(ctx, a.DB).Where("action_id IN ?", subQuery).Delete(entity.MenuActionResource{})

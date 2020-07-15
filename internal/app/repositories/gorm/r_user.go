@@ -29,8 +29,8 @@ func (a *User) Query(ctx context.Context, params schema.UserQueryParam, opts ...
 	opt := a.getQueryOption(opts...)
 
 	db := entity.GetUserDB(ctx, a.DB)
-	if v := params.UserName; v != "" {
-		db = db.Where("user_name=?", v)
+	if v := params.Email; v != "" {
+		db = db.Where("email=?", v)
 	}
 	if v := params.Status; v > 0 {
 		db = db.Where("status=?", v)

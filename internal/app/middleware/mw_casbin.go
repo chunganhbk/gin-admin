@@ -2,13 +2,13 @@ package middleware
 
 import (
 	"github.com/chunganhbk/gin-go/internal/app/config"
-	"github.com/chunganhbk/gin-go/internal/app/ginplus"
-	"github.com/chunganhbk/gin-go/pkg/errors"
 	"github.com/casbin/casbin/v2"
+	"github.com/chunganhbk/gin-go/pkg/app"
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 )
 
-// CasbinMiddleware casbin中间件
+// Casbin Middleware
 func CasbinMiddleware(enforcer *casbin.SyncedEnforcer, skippers ...SkipperFunc) gin.HandlerFunc {
 	cfg := config.C.Casbin
 	if !cfg.Enable {
@@ -23,11 +23,11 @@ func CasbinMiddleware(enforcer *casbin.SyncedEnforcer, skippers ...SkipperFunc) 
 
 		p := c.Request.URL.Path
 		m := c.Request.Method
-		if b, err := enforcer.Enforce(ginplus.GetUserID(c), p, m); err != nil {
-			ginplus.ResError(c, errors.WithStack(err))
+		if b, err := enforcer.Enforce(app.GetUserID(c), p, m); err != nil {
+			app.ResError(c, errors.WithStack(err))
 			return
 		} else if !b {
-			ginplus.ResError(c, errors.ErrNoPerm)
+			app.ResError(c, app.NoPermissionResponse())
 			return
 		}
 		c.Next()

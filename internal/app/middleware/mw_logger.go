@@ -1,16 +1,15 @@
 package middleware
 
 import (
+	"github.com/chunganhbk/gin-go/pkg/app"
 	"mime"
 	"net/http"
 	"time"
-
-	"github.com/chunganhbk/gin-go/internal/app/ginplus"
 	"github.com/chunganhbk/gin-go/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 
-// LoggerMiddleware 日志中间件
+// Logger Middleware
 func LoggerMiddleware(skippers ...SkipperFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if SkipHandler(c, skippers...) {
@@ -38,7 +37,7 @@ func LoggerMiddleware(skippers ...SkipperFunc) gin.HandlerFunc {
 		if method == http.MethodPost || method == http.MethodPut {
 			mediaType, _, _ := mime.ParseMediaType(c.GetHeader("Content-Type"))
 			if mediaType != "multipart/form-data" {
-				if v, ok := c.Get(ginplus.ReqBodyKey); ok {
+				if v, ok := c.Get(app.ReqBodyKey); ok {
 					if b, ok := v.([]byte); ok {
 						fields["body"] = string(b)
 					}
@@ -51,19 +50,19 @@ func LoggerMiddleware(skippers ...SkipperFunc) gin.HandlerFunc {
 		fields["res_status"] = c.Writer.Status()
 		fields["res_length"] = c.Writer.Size()
 
-		if v, ok := c.Get(ginplus.LoggerReqBodyKey); ok {
+		if v, ok := c.Get(app.LoggerReqBodyKey); ok {
 			if b, ok := v.([]byte); ok {
 				fields["body"] = string(b)
 			}
 		}
 
-		if v, ok := c.Get(ginplus.ResBodyKey); ok {
+		if v, ok := c.Get(app.ResBodyKey); ok {
 			if b, ok := v.([]byte); ok {
 				fields["res_body"] = string(b)
 			}
 		}
 
-		fields[logger.UserIDKey] = ginplus.GetUserID(c)
+		fields[logger.UserIDKey] = app.GetUserID(c)
 		span.WithFields(fields).Infof("[http] %s-%s-%s-%d(%dms)",
 			p, c.Request.Method, c.ClientIP(), c.Writer.Status(), timeConsuming)
 	}

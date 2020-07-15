@@ -18,6 +18,7 @@ var MsgFlags = map[int]string{
 	ERROR_NOT_ALLOW_DELETE:         "Resources are not allowed to be deleted",
 	ERROR_INVALID_OLD_PASS:         "Old password is incorrect",
 	ERROR_NOT_FOUND:                "Resource does not exist",
+	ERROR_PASSWORD_REQUIRED:        "Password is required",
 	ERROR_EXIST_MENU_NAME:          "Menu name already exists",
 	ERROR_USER_DISABLED:            "User is disabled, please contact administrator",
 	ERROR_NO_PERRMISSION:           "No access",

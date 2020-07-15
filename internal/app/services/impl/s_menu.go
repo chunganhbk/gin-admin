@@ -280,7 +280,7 @@ func (m *MenuService) Update(ctx context.Context, id string, item schema.Menu) e
 			return err
 		}
 
-		return m.MenuModel.Update(ctx, id, item)
+		return m.MenuRp.Update(ctx, id, item)
 	})
 }
 

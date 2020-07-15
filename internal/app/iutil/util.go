@@ -32,10 +32,6 @@ func InitID() {
 			return unique.NewSnowflakeID().String()
 		})
 
-		trace.SetIDFunc(func() string {
-			return unique.NewSnowflakeID().String()
-		})
-
 		idFunc = func() string {
 			return unique.NewSnowflakeID().String()
 		}

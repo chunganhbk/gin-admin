@@ -26,27 +26,24 @@ func (a SchemaMenuActionResource) ToMenuActionResource() *MenuActionResource {
 // MenuActionResource 菜单动作关联资源实体
 type MenuActionResource struct {
 	Model
-	ActionID string `gorm:"column:action_id;size:36;index;default:'';not null;"` // 菜单动作ID
-	Method   string `gorm:"column:method;size:100;default:'';not null;"`         // 资源请求方式(支持正则)
-	Path     string `gorm:"column:path;size:100;default:'';not null;"`           // 资源请求路径（支持/:id匹配）
+	ActionID string `gorm:"column:action_id;size:36;index;default:'';not null;"`
+	Method   string `gorm:"column:method;size:100;default:'';not null;"`
+	Path     string `gorm:"column:path;size:100;default:'';not null;"`
 }
 
-// TableName 表名
-func (a MenuActionResource) TableName() string {
-	return a.Model.TableName("menu_action_resource")
-}
 
-// ToSchemaMenuActionResource 转换为菜单动作关联资源对象
+
+// To Schema MenuAction Resource
 func (a MenuActionResource) ToSchemaMenuActionResource() *schema.MenuActionResource {
 	item := new(schema.MenuActionResource)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// MenuActionResources 菜单动作关联资源列表
+// Menu Action Resources
 type MenuActionResources []*MenuActionResource
 
-// ToSchemaMenuActionResources 转换为菜单动作关联资源对象列表
+// To Schema MenuAction Resources
 func (a MenuActionResources) ToSchemaMenuActionResources() []*schema.MenuActionResource {
 	list := make([]*schema.MenuActionResource, len(a))
 	for i, item := range a {

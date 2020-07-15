@@ -3,6 +3,7 @@ package util
 import (
 	"crypto/md5"
 	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 

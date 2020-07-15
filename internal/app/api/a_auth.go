@@ -53,11 +53,8 @@ func (a *Auth) Login(c *gin.Context) {
 	app.ResSuccess(c, tokenInfo)
 }
 
-
-
 // RefreshToken
 func (a *Auth) RefreshToken(c *gin.Context) {
-	ctx := c.Request.Context()
 	tokenInfo, err := a.AuthService.GenerateToken(app.GetUserID(c))
 	if err != nil {
 		app.ResError(c, err)
@@ -65,5 +62,22 @@ func (a *Auth) RefreshToken(c *gin.Context) {
 	}
 	app.ResSuccess(c, tokenInfo)
 }
+func (a *Auth) Register(c *gin.Context){
+	ctx := c.Request.Context()
+	var item schema.User
+	if err := app.ParseJSON(c, &item); err != nil {
+		app.ResError(c, err)
+		return
+	} else if item.Password == "" {
+		app.ResError(c, app.New400Response(app.ERROR_PASSWORD_REQUIRED))
+		return
+	}
 
+	result, err := a.UserService.Create(ctx, item)
+	if err != nil {
+		app.ResError(c, err)
+		return
+	}
+	app.ResSuccess(c, result)
+}
 

@@ -2,134 +2,134 @@ package api
 
 import (
 	"github.com/chunganhbk/gin-go/internal/app/services"
-	"github.com/chunganhbk/gin-go/internal/app/ginplus"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/pkg/app"
 	"github.com/gin-gonic/gin"
-	"github.com/google/wire"
+
 )
 
-// MenuSet 注入Menu
-var MenuSet = wire.NewSet(wire.Struct(new(Menu), "*"))
-
-// Menu 菜单管理
+// Menu
 type Menu struct {
-	MenuBll services.IMenu
+	MenuService services.IMenuService
 }
 
-// Query 查询数据
-func (a *Menu) Query(c *gin.Context) {
+func NewMenu( menuService services.IMenuService) *Menu{
+	return &Menu{menuService}
+}
+// Query menu
+func (m *Menu) Query(c *gin.Context) {
 	ctx := c.Request.Context()
 	var params schema.MenuQueryParam
-	if err := ginplus.ParseQuery(c, &params); err != nil {
-		ginplus.ResError(c, err)
+	if err := app.ParseQuery(c, &params); err != nil {
+		app.ResError(c, err)
 		return
 	}
 
 	params.Pagination = true
-	result, err := a.MenuBll.Query(ctx, params, schema.MenuQueryOptions{
+	result, err := m.MenuService.Query(ctx, params, schema.MenuQueryOptions{
 		OrderFields: schema.NewOrderFields(schema.NewOrderField("sequence", schema.OrderByDESC)),
 	})
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResPage(c, result.Data, result.PageResult)
+	app.ResPage(c, result.Data, result.PageResult)
 }
 
-// QueryTree 查询菜单树
-func (a *Menu) QueryTree(c *gin.Context) {
+// Query Tree  menu
+func (m *Menu) QueryTree(c *gin.Context) {
 	ctx := c.Request.Context()
 	var params schema.MenuQueryParam
-	if err := ginplus.ParseQuery(c, &params); err != nil {
-		ginplus.ResError(c, err)
+	if err := app.ParseQuery(c, &params); err != nil {
+		app.ResError(c, err)
 		return
 	}
 
-	result, err := a.MenuBll.Query(ctx, params, schema.MenuQueryOptions{
-		OrderFields: schema.NewOrderFields(schema.NewOrderField("sequence", schema.OrderByDESC)),
+	result, err := m.MenuService.Query(ctx, params, schema.MenuQueryOptions{
+		OrderFields: schema.NewOrderFields(schema.NewOrderField("order", schema.OrderByDESC)),
 	})
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResList(c, result.Data.ToTree())
+	app.ResList(c, result.Data.ToTree())
 }
 
-// Get 查询指定数据
+// Get menu
 func (a *Menu) Get(c *gin.Context) {
 	ctx := c.Request.Context()
-	item, err := a.MenuBll.Get(ctx, c.Param("id"))
+	item, err := a.MenuService.Get(ctx, c.Param("id"))
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, item)
+	app.ResSuccess(c, item)
 }
 
-// Create 创建数据
-func (a *Menu) Create(c *gin.Context) {
+// Create menu
+func (m *Menu) Create(c *gin.Context) {
 	ctx := c.Request.Context()
 	var item schema.Menu
-	if err := ginplus.ParseJSON(c, &item); err != nil {
-		ginplus.ResError(c, err)
+	if err := app.ParseJSON(c, &item); err != nil {
+		app.ResError(c, err)
 		return
 	}
 
-	item.Creator = ginplus.GetUserID(c)
-	result, err := a.MenuBll.Create(ctx, item)
+	item.Creator = app.GetUserID(c)
+	result, err := m.MenuService.Create(ctx, item)
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, result)
+	app.ResSuccess(c, result)
 }
 
-// Update 更新数据
-func (a *Menu) Update(c *gin.Context) {
+// Update menu
+func (m *Menu) Update(c *gin.Context) {
 	ctx := c.Request.Context()
 	var item schema.Menu
-	if err := ginplus.ParseJSON(c, &item); err != nil {
-		ginplus.ResError(c, err)
+	if err := app.ParseJSON(c, &item); err != nil {
+		app.ResError(c, err)
 		return
 	}
 
-	err := a.MenuBll.Update(ctx, c.Param("id"), item)
+	err := m.MenuService.Update(ctx, c.Param("id"), item)
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResOK(c)
+	app.ResSuccess(c, nil)
 }
 
-// Delete 删除数据
-func (a *Menu) Delete(c *gin.Context) {
+// Delete menu
+func (m *Menu) Delete(c *gin.Context) {
 	ctx := c.Request.Context()
-	err := a.MenuBll.Delete(ctx, c.Param("id"))
+	err := m.MenuService.Delete(ctx, c.Param("id"))
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResOK(c)
+	app.ResOK(c)
 }
 
-// Enable 启用数据
-func (a *Menu) Enable(c *gin.Context) {
+// Enable menu
+func (m *Menu) Enable(c *gin.Context) {
 	ctx := c.Request.Context()
-	err := a.MenuBll.UpdateStatus(ctx, c.Param("id"), 1)
+	err := m.MenuService.UpdateStatus(ctx, c.Param("id"), 1)
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResOK(c)
+	app.ResOK(c)
 }
 
-// Disable 禁用数据
-func (a *Menu) Disable(c *gin.Context) {
+// Disable menu
+func (m *Menu) Disable(c *gin.Context) {
 	ctx := c.Request.Context()
-	err := a.MenuBll.UpdateStatus(ctx, c.Param("id"), 2)
+	err := m.MenuService.UpdateStatus(ctx, c.Param("id"), 2)
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResOK(c)
+	app.ResOK(c)
 }

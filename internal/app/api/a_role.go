@@ -2,134 +2,133 @@ package api
 
 import (
 	"github.com/chunganhbk/gin-go/internal/app/services"
-	"github.com/chunganhbk/gin-go/internal/app/ginplus"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/pkg/app"
 	"github.com/gin-gonic/gin"
-	"github.com/google/wire"
+
 )
 
-// RoleSet 注入Role
-var RoleSet = wire.NewSet(wire.Struct(new(Role), "*"))
 
-// Role 角色管理
 type Role struct {
-	RoleBll services.IRole
+	RoleService services.IRoleService
 }
-
-// Query 查询数据
-func (a *Role) Query(c *gin.Context) {
+func NewRole(roleService services.IRoleService) *Role{
+	return &Role{RoleService: roleService}
+}
+// Query menu
+func (r *Role) Query(c *gin.Context) {
 	ctx := c.Request.Context()
 	var params schema.RoleQueryParam
-	if err := ginplus.ParseQuery(c, &params); err != nil {
-		ginplus.ResError(c, err)
+	if err := app.ParseQuery(c, &params); err != nil {
+		app.ResError(c, err)
 		return
 	}
 
 	params.Pagination = true
-	result, err := a.RoleBll.Query(ctx, params, schema.RoleQueryOptions{
+	result, err := r.RoleService.Query(ctx, params, schema.RoleQueryOptions{
 		OrderFields: schema.NewOrderFields(schema.NewOrderField("sequence", schema.OrderByDESC)),
 	})
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResPage(c, result.Data, result.PageResult)
+	app.ResPage(c, result.Data, result.PageResult)
 }
 
-// QuerySelect 查询选择数据
-func (a *Role) QuerySelect(c *gin.Context) {
+// Query Select role
+func (r *Role) QuerySelect(c *gin.Context) {
 	ctx := c.Request.Context()
 	var params schema.RoleQueryParam
-	if err := ginplus.ParseQuery(c, &params); err != nil {
-		ginplus.ResError(c, err)
+	if err := app.ParseQuery(c, &params); err != nil {
+		app.ResError(c, err)
 		return
 	}
 
-	result, err := a.RoleBll.Query(ctx, params, schema.RoleQueryOptions{
-		OrderFields: schema.NewOrderFields(schema.NewOrderField("sequence", schema.OrderByDESC)),
+	result, err := r.RoleService.Query(ctx, params, schema.RoleQueryOptions{
+		OrderFields: schema.NewOrderFields(schema.NewOrderField("order", schema.OrderByDESC)),
 	})
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResList(c, result.Data)
+	app.ResList(c, result.Data)
 }
 
-// Get 查询指定数据
-func (a *Role) Get(c *gin.Context) {
+// Get role detail
+func (r *Role) Get(c *gin.Context) {
 	ctx := c.Request.Context()
-	item, err := a.RoleBll.Get(ctx, c.Param("id"))
+	item, err := r.RoleService.Get(ctx, c.Param("id"))
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, item)
+	app.ResSuccess(c, item)
 }
 
-// Create 创建数据
+// Create menu
 func (a *Role) Create(c *gin.Context) {
 	ctx := c.Request.Context()
 	var item schema.Role
-	if err := ginplus.ParseJSON(c, &item); err != nil {
-		ginplus.ResError(c, err)
+	if err := app.ParseJSON(c, &item); err != nil {
+		app.ResError(c, err)
 		return
 	}
 
-	item.Creator = ginplus.GetUserID(c)
-	result, err := a.RoleBll.Create(ctx, item)
+	item.Creator = app.GetUserID(c)
+	result, err := a.RoleService.Create(ctx, item)
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, result)
+	app.ResSuccess(c, result)
 }
 
-// Update 更新数据
-func (a *Role) Update(c *gin.Context) {
+// Update role
+func (r *Role) Update(c *gin.Context) {
 	ctx := c.Request.Context()
 	var item schema.Role
-	if err := ginplus.ParseJSON(c, &item); err != nil {
-		ginplus.ResError(c, err)
+	if err := app.ParseJSON(c, &item); err != nil {
+		app.ResError(c, err)
 		return
 	}
 
-	err := a.RoleBll.Update(ctx, c.Param("id"), item)
+	err := r.RoleService.Update(ctx, c.Param("id"), item)
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResOK(c)
+	app.ResOK(c)
 }
 
-// Delete 删除数据
-func (a *Role) Delete(c *gin.Context) {
+// Delete  role
+func (r *Role) Delete(c *gin.Context) {
 	ctx := c.Request.Context()
-	err := a.RoleBll.Delete(ctx, c.Param("id"))
+	err := r.RoleService.Delete(ctx, c.Param("id"))
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResOK(c)
+	app.ResOK(c)
 }
 
-// Enable 启用数据
-func (a *Role) Enable(c *gin.Context) {
+// Enable role
+func (r *Role) Enable(c *gin.Context) {
 	ctx := c.Request.Context()
-	err := a.RoleBll.UpdateStatus(ctx, c.Param("id"), 1)
+	err := r.RoleService.UpdateStatus(ctx, c.Param("id"), 1)
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResOK(c)
+	app.ResOK(c)
 }
 
-// Disable 禁用数据
-func (a *Role) Disable(c *gin.Context) {
+// Disable role
+func (r *Role) Disable(c *gin.Context) {
 	ctx := c.Request.Context()
-	err := a.RoleBll.UpdateStatus(ctx, c.Param("id"), 2)
+	err := r.RoleService.UpdateStatus(ctx, c.Param("id"), 2)
 	if err != nil {
-		ginplus.ResError(c, err)
+		app.ResError(c, err)
 		return
 	}
-	ginplus.ResOK(c)
+	app.ResOK(c)
 }

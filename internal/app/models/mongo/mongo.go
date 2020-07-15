@@ -3,8 +3,6 @@ package mongo
 import (
 	"context"
 	"time"
-
-	"github.com/chunganhbk/gin-go/internal/app/models/mongoty"
 	"github.com/chunganhbk/gin-go/pkg/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

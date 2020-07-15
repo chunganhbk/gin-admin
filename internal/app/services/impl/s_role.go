@@ -120,20 +120,20 @@ func (r *RoleService) Update(ctx context.Context, id string, item schema.Role) e
 		for _, rmitem := range addRoleMenus {
 			rmitem.ID = iutil.NewID()
 			rmitem.RoleID = id
-			err := a.RoleMenuModel.Create(ctx, *rmitem)
+			err := r.RoleMenuRp.Create(ctx, *rmitem)
 			if err != nil {
 				return err
 			}
 		}
 
 		for _, rmitem := range delRoleMenus {
-			err := r.RoleMenuModel.Delete(ctx, rmitem.ID)
+			err := r.RoleMenuRp.Delete(ctx, rmitem.ID)
 			if err != nil {
 				return err
 			}
 		}
 
-		return r.RoleModel.Update(ctx, id, item)
+		return r.RoleRp.Update(ctx, id, item)
 	})
 	if err != nil {
 		return err

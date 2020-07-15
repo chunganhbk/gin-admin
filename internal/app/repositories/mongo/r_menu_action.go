@@ -75,7 +75,7 @@ func (m *MenuAction) Create(ctx context.Context, item schema.MenuAction) error {
 	eitem := imodel.SchemaMenuAction(item).ToMenuAction()
 	eitem.CreatedAt = time.Now()
 	eitem.UpdatedAt = time.Now()
-	c := imodel.GetMenuActionCollection(ctx, a.Client)
+	c := imodel.GetMenuActionCollection(ctx, m.Client)
 	err := Insert(ctx, c, eitem)
 	return errors.WithStack(err)
 }

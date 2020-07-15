@@ -9,7 +9,7 @@ import (
 )
 
 
-// Role \
+// Role
 type Role struct {
 	DB *gorm.DB
 }

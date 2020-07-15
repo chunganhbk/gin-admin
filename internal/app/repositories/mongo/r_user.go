@@ -34,12 +34,11 @@ func (a *User) Query(ctx context.Context, params schema.UserQueryParam, opts ...
 
 	c := entity.GetUserCollection(ctx, a.Client)
 	filter := DefaultFilter(ctx)
-	if v := params.UserName; v != "" {
-		filter = append(filter, Filter("user_name", v))
+	if v := params.Email; v != "" {
+		filter = append(filter, Filter("email", v))
 	}
 	if v := params.QueryValue; v != "" {
 		filter = append(filter, Filter("$or", bson.A{
-			OrRegexFilter("user_name", v),
 			OrRegexFilter("full_name", v),
 			OrRegexFilter("phone", v),
 			OrRegexFilter("email", v),

@@ -2,31 +2,29 @@ package middleware
 
 import (
 	"fmt"
+	"github.com/chunganhbk/gin-go/pkg/app"
 	"strings"
-
-	"github.com/chunganhbk/gin-go/internal/app/ginplus"
-	"github.com/chunganhbk/gin-go/pkg/errors"
 	"github.com/gin-gonic/gin"
 )
 
-// NoMethodHandler 未找到请求方法的处理函数
+// No Method Handler
 func NoMethodHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ginplus.ResError(c, errors.ErrMethodNotAllow)
+		app.ResError(c, app.MethodNotAllowResponse())
 	}
 }
 
-// NoRouteHandler 未找到请求路由的处理函数
+// No Route Handler
 func NoRouteHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ginplus.ResError(c, errors.ErrNotFound)
+		app.ResError(c, app.ResponseNotFound())
 	}
 }
 
-// SkipperFunc 定义中间件跳过函数
+// SkipperFunc
 type SkipperFunc func(*gin.Context) bool
 
-// AllowPathPrefixSkipper 检查请求路径是否包含指定的前缀，如果包含则跳过
+// Allow PathPrefix Skipper
 func AllowPathPrefixSkipper(prefixes ...string) SkipperFunc {
 	return func(c *gin.Context) bool {
 		path := c.Request.URL.Path
@@ -41,7 +39,7 @@ func AllowPathPrefixSkipper(prefixes ...string) SkipperFunc {
 	}
 }
 
-// AllowPathPrefixNoSkipper 检查请求路径是否包含指定的前缀，如果包含则不跳过
+// Allow PathPrefix NoSkipper
 func AllowPathPrefixNoSkipper(prefixes ...string) SkipperFunc {
 	return func(c *gin.Context) bool {
 		path := c.Request.URL.Path
@@ -56,7 +54,7 @@ func AllowPathPrefixNoSkipper(prefixes ...string) SkipperFunc {
 	}
 }
 
-// AllowMethodAndPathPrefixSkipper 检查请求方法和路径是否包含指定的前缀，如果不包含则跳过
+// Allow Method And PathPrefix Skipper
 func AllowMethodAndPathPrefixSkipper(prefixes ...string) SkipperFunc {
 	return func(c *gin.Context) bool {
 		path := JoinRouter(c.Request.Method, c.Request.URL.Path)
@@ -71,7 +69,7 @@ func AllowMethodAndPathPrefixSkipper(prefixes ...string) SkipperFunc {
 	}
 }
 
-// JoinRouter 拼接路由
+// Join Router
 func JoinRouter(method, path string) string {
 	if len(path) > 0 && path[0] != '/' {
 		path = "/" + path
@@ -79,7 +77,7 @@ func JoinRouter(method, path string) string {
 	return fmt.Sprintf("%s%s", strings.ToUpper(method), path)
 }
 
-// SkipHandler 统一处理跳过函数
+// Skip Handler
 func SkipHandler(c *gin.Context, skippers ...SkipperFunc) bool {
 	for _, skipper := range skippers {
 		if skipper(c) {
@@ -89,7 +87,7 @@ func SkipHandler(c *gin.Context, skippers ...SkipperFunc) bool {
 	return false
 }
 
-// EmptyMiddleware 不执行业务处理的中间件
+// Empty Middleware
 func EmptyMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()

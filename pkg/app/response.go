@@ -31,6 +31,7 @@ const (
 	ERROR_NOT_EXIST_USER           = 416
 	ERROR_LOGIN_FAILED             = 422
 	ERROR_INVALID_OLD_PASS         = 423
+	ERROR_PASSWORD_REQUIRED        = 424
 	ERROR_TOO_MANY_REQUEST         = 429
 	ERROR_INTERNAL_SERVER          = 512
 	ERROR_AUTH_CHECK_TOKEN_FAIL    = 20001
@@ -79,7 +80,12 @@ func ResPage(c *gin.Context, v interface{}, pr *schema.PaginationResult) {
 func ResSuccess(c *gin.Context, v interface{}) {
 	ResJSON(c, http.StatusOK, SUCCESS, v, nil)
 }
-
+func ResList(c *gin.Context, v interface{}) {
+	ResSuccess(c, schema.ListResult{List: v})
+}
+func ResOK(c *gin.Context){
+	ResSuccess(c, nil)
+}
 func ResJSON(c *gin.Context, httpCode, errCode int, data interface{}, err error) {
 	msg := GetMsg(errCode)
 	if httpCode == http.StatusBadRequest{
