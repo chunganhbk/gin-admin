@@ -18,7 +18,44 @@ var UserSet = wire.NewSet(wire.Struct(new(User), "*"))
 type User struct {
 	UserBll services.IUser
 }
+// GetUserInfo 获取当前用户信息
+func (a *Login) GetUserInfo(c *gin.Context) {
+	ctx := c.Request.Context()
+	info, err := a.LoginBll.GetLoginInfo(ctx, ginplus.GetUserID(c))
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResSuccess(c, info)
+}
 
+// QueryUserMenuTree 查询当前用户菜单树
+func (a *Login) QueryUserMenuTree(c *gin.Context) {
+	ctx := c.Request.Context()
+	menus, err := a.LoginBll.QueryUserMenuTree(ctx, ginplus.GetUserID(c))
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResList(c, menus)
+}
+
+// UpdatePassword 更新个人密码
+func (a *Login) UpdatePassword(c *gin.Context) {
+	ctx := c.Request.Context()
+	var item schema.UpdatePasswordParam
+	if err := ginplus.ParseJSON(c, &item); err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	err := a.LoginBll.UpdatePassword(ctx, ginplus.GetUserID(c), item)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResOK(c)
+}
 // Query 查询数据
 func (a *User) Query(c *gin.Context) {
 	ctx := c.Request.Context()

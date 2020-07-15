@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/chunganhbk/gin-go/pkg/logger"
 	"github.com/gin-gonic/gin"
@@ -80,9 +81,13 @@ func ResSuccess(c *gin.Context, v interface{}) {
 }
 
 func ResJSON(c *gin.Context, httpCode, errCode int, data interface{}, err error) {
+	msg := GetMsg(errCode)
+	if httpCode == http.StatusBadRequest{
+		msg = fmt.Sprintf(msg, err.Error())
+	}
 	c.JSON(httpCode, Response{
 		Code: errCode,
-		Msg:  GetMsg(errCode),
+		Msg:  msg,
 		Data: data,
 		ERR:  err,
 	})

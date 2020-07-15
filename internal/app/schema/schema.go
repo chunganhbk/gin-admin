@@ -36,7 +36,7 @@ type ListResult struct {
 	Pagination *PaginationResult `json:"pagination,omitempty"`
 }
 
-// PaginationResult
+// Pagination Result
 type PaginationResult struct {
 	Total    int  `json:"total"`
 	Current  uint `json:"current"`
@@ -51,12 +51,12 @@ type PaginationParam struct {
 	PageSize   uint `form:"pageSize,default=10" binding:"max=100"`
 }
 
-// GetCurrent 获取当前页
+// GetCurrent
 func (a PaginationParam) GetCurrent() uint {
 	return a.Current
 }
 
-// GetPageSize 获取页大小
+// GetPageSize
 func (a PaginationParam) GetPageSize() uint {
 	pageSize := a.PageSize
 	if a.PageSize == 0 {

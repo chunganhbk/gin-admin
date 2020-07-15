@@ -4,7 +4,7 @@ package app
 
 var MsgFlags = map[int]string{
 	SUCCESS:                        "ok",
-	INVALID_PARAMS:                 "Request parameter error",
+	INVALID_PARAMS:                 "Request parameter error - %s",
 	ERROR_AUTH_CHECK_TOKEN_FAIL:    "Token authentication failed",
 	ERROR_AUTH_CHECK_TOKEN_TIMEOUT: "Token time out",
 	ERROR_AUTH_TOKEN:               "Token build failed",

@@ -13,6 +13,7 @@ require (
 	github.com/jinzhu/gorm v1.9.14 // indirect
 	github.com/koding/multiconfig v0.0.0-20171124222453-69c27309b2d7 // indirect
 	github.com/sirupsen/logrus v1.6.0 // indirect
+	github.com/swaggo/gin-swagger v1.2.0 // indirect
 	go.mongodb.org/mongo-driver v1.3.5 // indirect
 	go.uber.org/dig v1.10.0 // indirect
 )
