@@ -1,243 +1,180 @@
-# 运行模式(debug:调试,test:测试,release:正式)
+# Operating mode(debug,test,release)
 RunMode = "debug"
 
-# 静态站点目录(也可以启动服务时使用-www指定)
+# Static site directory(You can also use -www to specify when starting the service)
 WWW = ""
-Store="gorm"
-# 是否启用swagger
+# store type gorm or mongo
+store="gorm"
+# Whether to enable swagger
 Swagger = true
 
-# 启动时是否打印配置参数
+# Whether to print configuration parameters at startup
 PrintConfig = true
 
 [HTTP]
-# http监听地址
+# http listen address
 Host = "0.0.0.0"
-# http监听端口
-Port = 10088
-# 证书路径
+# http port
+Port = 8000
+# Certification path
 CertFile = ""
-# 证书密钥
+# Certificate key
 KeyFile = ""
-# http优雅关闭等待超时时长(单位秒)
+# http Graceful shutdown wait timeout duration (in seconds)
 ShutdownTimeout = 30
-# 允许的最大内容长度(64M)
+# Maximum content length allowed(64M)
 MaxContentLength = 67108864
 
 [Menu]
-# 使用启用初始化菜单数据
+# Use Enable Initialize Menu Data
 Enable = true
-# 数据文件(yaml,也可以启动服务时使用-menu指定)
+# datafile(yaml,Can also be used when starting the service-menu)
 Data = ""
 
 [Casbin]
-# 是否启用casbin
+# enable to casbin
 Enable = true
-# debug模式
+# debug mode
 Debug = false
-# 模型配置文件(也可以启动服务时使用-m指定)
+# Model configuration file (can also be specified with -m when starting the service)
 Model = ""
-# 是否启用定期自动加载策略
+# Whether to enable periodic automatic loading strategy
 AutoLoad = false
-# 定期自动加载策略时间间隔（单位秒）
+# Time interval for automatic strategy loading (in seconds)
 AutoLoadInternal = 60
-
 [Log]
-# 日志级别(1:fatal 2:error,3:warn,4:info,5:debug)
+# Log level(1:fatal 2:error,3:warn,4:info,5:debug)
 Level = 5
-# 日志格式（支持输出格式：text/json）
+# Log format (support output format: text/json)
 Format = "text"
-# 日志输出(支持：stdout/stderr/file)
+#Log output (support: stdout/stderr/file)
 Output = "stdout"
-# 指定日志输出的文件路径
+# Specify the file path for log output
 OutputFile = "data/gin-admin.log"
-# 是否启用日志钩子
+#
 EnableHook = false
-# 写入钩子的日志级别
+# logs store Db level
 HookLevels = ["info","warn","error"]
-# 日志钩子(支持：gorm/mongo)
+# hook DB (type：gorm/mongo)
 Hook = "gorm"
-# 写入钩子的最大工作线程数量
+# Process max
 HookMaxThread = 1
-# 写入钩子的最大缓冲区数量
+# The maximum number of buffers written to the hook
 HookMaxBuffer = 512
 
 [LogGormHook]
-# 数据库类型(目前支持的数据库类型：mysql/sqlite3/postgres)
+# database type (support DB  ：mysql/sqlite3/postgres)
 DBType = "sqlite3"
-# 设置连接可以重用的最长时间(单位：秒)
+# max life time (Unit: second)
 MaxLifetime = 7200
-# 设置数据库的最大打开连接数
+# Max number connect DB
 MaxOpenConns = 1
-# 设置空闲连接池中的最大连接数
+# Max connect pool
 MaxIdleConns = 1
-# 数据库表名
-Table = "g_logger"
+# Table name log
+Table = "logger"
 
 [LogMongoHook]
-# 数据库表名
-Collection = "g_logger"
+# collection mongodb logs
+Collection = "logger"
 
-# 服务监控(GOPS:https://github.com/google/gops)
-[Monitor]
-# 是否启用
-Enable = false
-# HTTP的监听地址和端口
-Addr = "127.0.0.1:16060"
-# 配置文件目录(为空则使用默认目录)
+
+
+# Cofig forder static files
 ConfigDir = ""
 
-[Root]
-# 登录用户名
-UserName = "root"
-# 登录密码
-Password = "abc-123"
-# 显示的真实姓名
-RealName = "超级管理员"
 
-# redis配置信息
-[Redis]
-# 地址
-Addr = "127.0.0.1:6379"
-# 密码
-Password = ""
 
 [JWTAuth]
-# 是否启用
 Enable = true
-# 签名方式(支持：HS512/HS384/HS512)
-SigningMethod = "HS512"
-# 签名key
+# Signing Key
 SigningKey = "gin-admin"
-# 过期时间（单位秒）
+# Expired time (in seconds)
 Expired = 7200
-# 存储(支持：file/redis)
-Store = "file"
-# 文件路径
-FilePath = "data/jwt_auth.db"
-# redis数据库(如果存储方式是redis，则指定存储的数据库)
-RedisDB = 10
-# 存储到redis数据库中的键名前缀
-RedisPrefix = "auth_"
-
-[Captcha]
-# 存储方式(支持：memory/redis)
-Store = "memory"
-# 数字长度
-Length = 4
-# 图片宽度
-Width = 400
-# 图片高度
-Height = 160
-# redis数据库(如果存储方式是redis，则指定存储的数据库)
-RedisDB = 10
-# 存储到redis数据库中的键名前缀
-RedisPrefix = "captcha_"
-
-# 请求频率限制(如果redis可用则使用redis，否则使用内存存储)
-[RateLimiter]
-# 是否启用
-Enable = false
-# 每分钟每个用户允许的最大请求数量
-Count = 300
-# redis数据库(如果存储方式是redis，则指定存储的数据库)
-RedisDB = 10
 
 [CORS]
-# 是否启用
+# Whether to enable
 Enable = false
-# 允许跨域请求的域名列表(*表示全部允许)
+# List of domain names that allow cross-domain requests (* means all allowed)
 AllowOrigins = ["*"]
-# 允许跨域请求的请求方式列表
+# List of request methods that allow cross-domain requests
 AllowMethods = ["GET","POST","PUT","DELETE","PATCH"]
-# 允许客户端与跨域请求一起使用的非简单标头的列表
+# A list of non-simple headers that the client is allowed to use with cross-domain requests
 AllowHeaders = []
-# 请求是否可以包含cookie，HTTP身份验证或客户端SSL证书等用户凭据
+# Whether the request can contain user credentials such as cookies, HTTP authentication or client SSL certificates
 AllowCredentials = true
-# 可以缓存预检请求结果的时间（以秒为单位）
+# The time (in seconds) that the result of the preflight request can be cached
 MaxAge = 7200
 
-[GZIP]
-# 是否启用
-Enable = false
-# 排除的文件扩展名
-ExcludedExtentions = [".png",".gif",".jpeg",".jpg"]
-# 排除的请求路径
-ExcludedPaths = []
 
 [Gorm]
-# 是否开启调试模式
+# Whether to enable debug mode
 Debug = true
-# 数据库类型(目前支持的数据库类型：mysql/sqlite3/postgres)
+# Database type (currently supported database type: mysql/sqlite3/postgres)
 DBType = "sqlite3"
-# 设置连接可以重用的最长时间(单位：秒)
+# Set the maximum time that the connection can be reused (unit: seconds)
 MaxLifetime = 7200
-# 设置数据库的最大打开连接数
+# Set the maximum number of open connections to the database
 MaxOpenConns = 150
-# 设置空闲连接池中的最大连接数
+# Set the maximum number of connections in the idle connection pool
 MaxIdleConns = 50
-# 数据库表名前缀
-TablePrefix = "g_"
-# 是否启用自动映射数据库表结构
 EnableAutoMigrate = true
 
 [MySQL]
-# 连接地址
+# host address
 Host = "127.0.0.1"
-# 连接端口
+# port
 Port= 3306
-# 用户名
+# user
 User = "root"
-# 密码
+# password
 Password = "123456"
-# 数据库
+# DB name
 DBName = "gin-admin"
-# 连接参数
+# parameters
 Parameters = "charset=utf8mb4&parseTime=True&loc=Local&allowNativePasswords=true"
 
 [Postgres]
-# 连接地址
+# host address
 Host = "127.0.0.1"
-# 连接端口
+# port
 Port= 5432
-# 用户名
+# user name
 User = "root"
-# 密码
+# pass
 Password = "123456"
-# 数据库
+# database name
 DBName = "gin-admin"
-# SSL模式
+# SSL
 SSLMode = "disable"
 
 [Sqlite3]
-# 数据库路径
+# path db sqlite
 Path = "data/gin-admin.db"
 
-# mongo需要满足以下条件：
-# 4.0以上版本
-# 安装后以replication set（复本集）模式启动；
+# mongo
+# 4.
+# After installation, start in replication set mode；
 # replication:
-#   replSetName: rs0
+# replSetName: rs0
 # rs.initiate()
 # rs.status()
-# StorageEngine(存储引擎)须是wiredTiger (支持文档级别的锁)，4.0以上版本已经默认支持
+# StorageEngine (storage engine) must be wiredTiger (support document-level locks), version 4.0 and above has been supported by default
 [Mongo]
-# 连接地址(mongodb://user:password@localhost:27017/?authSource=admin)
+# url connect (mongodb://user:password@localhost:27017/?authSource=admin)
 URI = "mongodb://localhost:27017/?appName=gin-admin"
-# 数据库
+# database name
 Database = "gin-admin"
-# 连接超时(单位秒)
+# Connection timeout (in seconds)
 Timeout = 30
-# 集合名前缀
-CollectionPrefix = "g_"
 
 [UniqueID]
-# 唯一ID类型(支持：uuid/object/snowflake)
+# Unique ID type (support: uuid/object/snowflake)
 Type = "snowflake"
 
 # https://github.com/twitter-archive/snowflake
 [UniqueID.Snowflake]
-# 节点标识(0-1023)
+# Node ID (0-1023)
 Node = 1
-# 开始时间戳(2020-01-02 15:04:05)
-Epoch = 1577977445000
+# Start timestamp(2020-07-15 15:04:05)
+Epoch = 1594800245000
