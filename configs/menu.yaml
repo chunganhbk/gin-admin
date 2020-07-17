@@ -5,12 +5,12 @@
   order: 9
 - name: System Management
   icon: setting
-  sequence: 7
+  order: 7
   children:
     - name: Menu management
       icon: solution
       router: "/system/menu"
-      sequence: 9
+      order: 9
       actions:
         - code: add
           name: Add
@@ -49,7 +49,7 @@
     - name: Role management
       icon: audit
       router: "/system/role"
-      sequence: 8
+      order: 8
       actions:
         - code: add
           name: Add
@@ -90,7 +90,7 @@
     - name: User Management
       icon: user
       router: "/system/user"
-      sequence: 7
+      order: 7
       actions:
         - code: add
           name: Add

@@ -32,27 +32,27 @@ func main() {
 func newWebCmd(ctx context.Context) *cli.Command {
 	return &cli.Command{
 		Name:  "web",
-		Usage: "运行web服务",
+		Usage: "Run web service",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "conf",
 				Aliases:  []string{"c"},
-				Usage:    "配置文件(.json,.yaml,.toml)",
+				Usage:    "Configuration file(.json,.yaml,.toml)",
 				Required: true,
 			},
 			&cli.StringFlag{
 				Name:     "models",
 				Aliases:  []string{"m"},
-				Usage:    "casbin的访问控制模型(.conf)",
+				Usage:    "casbin's access control model(.conf)",
 				Required: true,
 			},
 			&cli.StringFlag{
 				Name:  "menu",
-				Usage: "初始化菜单数据配置文件(.yaml)",
+				Usage: "Initialize the menu data configuration file (.yaml)",
 			},
 			&cli.StringFlag{
 				Name:  "www",
-				Usage: "静态站点目录",
+				Usage: "Static site directory",
 			},
 		},
 		Action: func(c *cli.Context) error {
