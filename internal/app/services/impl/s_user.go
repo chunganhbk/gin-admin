@@ -71,19 +71,21 @@ func (u *UserService) InitData(ctx context.Context) error {
 		}
 		_ = u.RoleRp.Create(ctx, roleUser)
 		userSuperAdmin := schema.User{
+			ID:        "1",
 			Email:     "super-admin@system.com",
 			FirstName: "Super",
 			LastName:  "Admin",
-			Password:  "123456",
+			Password:  util.BcryptPwd("123456"),
 			FullName:  "Super Admin",
 			Status:    1,
 		}
 		user := schema.User{
+			ID:        iutil.NewID(),
 			Email:     "user@system.com",
 			FirstName: "User",
 			LastName:  "user",
-			Password:  "123456",
-			FullName:  "Super Admin",
+			Password:  util.BcryptPwd("123456"),
+			FullName:  "user ",
 			Status:    1,
 		}
 		_ = u.UserRp.Create(ctx, userSuperAdmin)
@@ -92,7 +94,7 @@ func (u *UserService) InitData(ctx context.Context) error {
 		_ = u.UserRoleRp.Create(ctx, schema.UserRole{
 			ID:     iutil.NewID(),
 			UserID: userSuperAdmin.ID,
-			RoleID: userSuperAdmin.ID,
+			RoleID: roleSuperAdmin.ID,
 		})
 		_ = u.UserRoleRp.Create(ctx, schema.UserRole{
 			ID:     iutil.NewID(),

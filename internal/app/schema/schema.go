@@ -24,6 +24,12 @@ type ErrorResult struct {
 	Message string `json:"message"`
 }
 
+type ResponseResult struct {
+	ErrorResult
+	Data interface{} `json:"data"`
+	ERR  interface{} `json:"err"`
+}
+
 // ListResult
 type ListResult struct {
 	List       interface{}       `json:"list"`

@@ -24,7 +24,7 @@ func (a SchemaUserRole) ToUserRole() *UserRole {
 
 // UserRole
 type UserRole struct {
-	Model
+	ID     string `gorm:"column:id;primary_key;size:36;"`
 	UserID string `gorm:"column:user_id;size:36;index;default:'';not null;"`
 	RoleID string `gorm:"column:role_id;size:36;index;default:'';not null;"`
 }
@@ -32,7 +32,7 @@ type UserRole struct {
 // To Schema UserRole
 func (a UserRole) ToSchemaUserRole() *schema.UserRole {
 	item := new(schema.UserRole)
-	util.StructMapToStruct(a, item)
+	_ = util.StructMapToStruct(a, item)
 	return item
 }
 

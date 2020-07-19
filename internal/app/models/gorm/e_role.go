@@ -26,14 +26,12 @@ func (a SchemaRole) ToRole() *Role {
 // Role
 type Role struct {
 	Model
-	Name     string  `gorm:"column:name;size:100;default:'';not null;"`
-	Order    int     `gorm:"column:order;index;default:0;not null;"`
-	Memo     *string `gorm:"column:memo;size:1024;"`
-	Status   int     `gorm:"column:status;default:0;not null;"`
-	Creator  string  `gorm:"column:creator;size:36;"`
+	Name    string  `gorm:"column:name;size:100;default:'';not null;"`
+	Order   int     `gorm:"column:order_number;index;default:0;not null;"`
+	Memo    *string `gorm:"column:memo;size:1024;"`
+	Status  int     `gorm:"column:status;default:0;not null;"`
+	Creator string  `gorm:"column:creator;size:36;"`
 }
-
-
 
 // To Schema Role
 func (a Role) ToSchemaRole() *schema.Role {

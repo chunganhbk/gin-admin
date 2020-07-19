@@ -13,21 +13,21 @@ func GetMenuCollection(ctx context.Context, cli *mongo.Client) *mongo.Collection
 	return GetCollection(ctx, cli, Menu{})
 }
 
-// SchemaMenu 菜单对象
+// SchemaMenu
 type SchemaMenu schema.Menu
 
-// ToMenu 转换为菜单实体
+// ToMenu
 func (a SchemaMenu) ToMenu() *Menu {
 	item := new(Menu)
 	util.StructMapToStruct(a, item)
 	return item
 }
 
-// Menu 菜单实体
+// Menu
 type Menu struct {
 	Model      `bson:",inline"`
 	Name       string `bson:"name"`
-	Order      int    `bson:"order"`
+	Order      int    `bson:"order_number"`
 	Icon       string `bson:"icon"`
 	Router     string `bson:"router"`
 	ParentID   string `bson:"parent_id"`

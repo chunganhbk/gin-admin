@@ -2,22 +2,21 @@ package mongo
 
 import (
 	"context"
-	"github.com/pkg/errors"
-	"time"
 	entity "github.com/chunganhbk/gin-go/internal/app/models/mongo"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
-
-
-// Role 角色存储
+// Role
 type Role struct {
 	Client *mongo.Client
 }
-func NewRole (client *mongo.Client) *Role {
+
+func NewRole(client *mongo.Client) *Role {
 	return &Role{client}
 }
 func (a *Role) getQueryOption(opts ...schema.RoleQueryOptions) schema.RoleQueryOptions {
@@ -72,7 +71,6 @@ func (r *Role) Query(ctx context.Context, params schema.RoleQueryParam, opts ...
 	return qr, nil
 }
 
-
 func (r *Role) Get(ctx context.Context, id string, opts ...schema.RoleQueryOptions) (*schema.Role, error) {
 	c := entity.GetRoleCollection(ctx, r.Client)
 	filter := DefaultFilter(ctx, Filter("_id", id))
@@ -87,7 +85,6 @@ func (r *Role) Get(ctx context.Context, id string, opts ...schema.RoleQueryOptio
 	return item.ToSchemaRole(), nil
 }
 
-
 func (r *Role) Create(ctx context.Context, item schema.Role) error {
 	eitem := entity.SchemaRole(item).ToRole()
 	eitem.CreatedAt = time.Now()
@@ -96,7 +93,6 @@ func (r *Role) Create(ctx context.Context, item schema.Role) error {
 	err := Insert(ctx, c, eitem)
 	return errors.WithStack(err)
 }
-
 
 func (r *Role) Update(ctx context.Context, id string, item schema.Role) error {
 	eitem := entity.SchemaRole(item).ToRole()

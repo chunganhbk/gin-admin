@@ -27,7 +27,7 @@ func (a SchemaMenu) ToMenu() *Menu {
 type Menu struct {
 	Model
 	Name       string  `gorm:"column:name;size:50;index;default:'';not null;"`
-	Order      int     `gorm:"column:order;index;default:0;not null;"`
+	Order      int     `gorm:"column:order_number;index;default:0;not null;"`
 	Icon       *string `gorm:"column:icon;size:255;"`
 	Router     *string `gorm:"column:router;size:255;"`
 	ParentID   *string `gorm:"column:parent_id;size:36;index;"`

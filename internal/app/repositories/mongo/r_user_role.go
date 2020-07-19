@@ -2,10 +2,9 @@ package mongo
 
 import (
 	"context"
-	"github.com/pkg/errors"
-	"time"
 	entity "github.com/chunganhbk/gin-go/internal/app/models/mongo"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -15,7 +14,8 @@ import (
 type UserRole struct {
 	Client *mongo.Client
 }
-func NewUserRole(client *mongo.Client) *UserRole{
+
+func NewUserRole(client *mongo.Client) *UserRole {
 	return &UserRole{client}
 }
 func (a *UserRole) getQueryOption(opts ...schema.UserRoleQueryOptions) schema.UserRoleQueryOptions {
@@ -29,7 +29,6 @@ func (a *UserRole) getQueryOption(opts ...schema.UserRoleQueryOptions) schema.Us
 // Query
 func (a *UserRole) Query(ctx context.Context, params schema.UserRoleQueryParam, opts ...schema.UserRoleQueryOptions) (*schema.UserRoleQueryResult, error) {
 	opt := a.getQueryOption(opts...)
-
 	c := entity.GetUserRoleCollection(ctx, a.Client)
 	filter := DefaultFilter(ctx)
 	userIDs := params.UserIDs
@@ -72,8 +71,6 @@ func (a *UserRole) Get(ctx context.Context, id string, opts ...schema.UserRoleQu
 // Create
 func (a *UserRole) Create(ctx context.Context, item schema.UserRole) error {
 	eitem := entity.SchemaUserRole(item).ToUserRole()
-	eitem.CreatedAt = time.Now()
-	eitem.UpdatedAt = time.Now()
 	c := entity.GetUserRoleCollection(ctx, a.Client)
 	err := Insert(ctx, c, eitem)
 	return errors.WithStack(err)
@@ -82,7 +79,6 @@ func (a *UserRole) Create(ctx context.Context, item schema.UserRole) error {
 // Update
 func (a *UserRole) Update(ctx context.Context, id string, item schema.UserRole) error {
 	eitem := entity.SchemaUserRole(item).ToUserRole()
-	eitem.UpdatedAt = time.Now()
 	c := entity.GetUserRoleCollection(ctx, a.Client)
 	err := Update(ctx, c, DefaultFilter(ctx, Filter("_id", id)), eitem)
 	return errors.WithStack(err)

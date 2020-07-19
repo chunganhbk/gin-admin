@@ -26,12 +26,12 @@ func (a SchemaRole) ToRole() *Role {
 
 // Role
 type Role struct {
-	Model    `bson:",inline"`
-	Name     string `bson:"name"`
-	Order    int    `bson:"order"`
-	Memo     string `bson:"memo"`
-	Status   int    `bson:"status"`
-	Creator  string `bson:"creator"`
+	Model   `bson:",inline"`
+	Name    string `bson:"name"`
+	Order   int    `bson:"order_number"`
+	Memo    string `bson:"memo"`
+	Status  int    `bson:"status"`
+	Creator string `bson:"creator"`
 }
 
 // CollectionName role
@@ -43,7 +43,7 @@ func (a Role) CollectionName() string {
 func (a Role) CreateIndexes(ctx context.Context, cli *mongo.Client) error {
 	return a.Model.CreateIndexes(ctx, cli, a, []mongo.IndexModel{
 		{Keys: bson.M{"name": 1}},
-		{Keys: bson.M{"sequence": -1}},
+		{Keys: bson.M{"order_number": -1}},
 		{Keys: bson.M{"status": 1}},
 	})
 }

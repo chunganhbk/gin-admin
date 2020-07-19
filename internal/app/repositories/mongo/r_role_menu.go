@@ -2,20 +2,21 @@ package mongo
 
 import (
 	"context"
-	"github.com/pkg/errors"
-	"time"
 	entity "github.com/chunganhbk/gin-go/internal/app/models/mongo"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
 // Role Menu
 type RoleMenu struct {
 	Client *mongo.Client
 }
-func NewRoleMenu(client *mongo.Client) *RoleMenu{
+
+func NewRoleMenu(client *mongo.Client) *RoleMenu {
 	return &RoleMenu{client}
 }
 func (a *RoleMenu) getQueryOption(opts ...schema.RoleMenuQueryOptions) schema.RoleMenuQueryOptions {
@@ -25,7 +26,6 @@ func (a *RoleMenu) getQueryOption(opts ...schema.RoleMenuQueryOptions) schema.Ro
 	}
 	return opt
 }
-
 
 func (a *RoleMenu) Query(ctx context.Context, params schema.RoleMenuQueryParam, opts ...schema.RoleMenuQueryOptions) (*schema.RoleMenuQueryResult, error) {
 	opt := a.getQueryOption(opts...)
@@ -71,8 +71,6 @@ func (a *RoleMenu) Get(ctx context.Context, id string, opts ...schema.RoleMenuQu
 // Create
 func (a *RoleMenu) Create(ctx context.Context, item schema.RoleMenu) error {
 	eitem := entity.SchemaRoleMenu(item).ToRoleMenu()
-	eitem.CreatedAt = time.Now()
-	eitem.UpdatedAt = time.Now()
 	c := entity.GetRoleMenuCollection(ctx, a.Client)
 	err := Insert(ctx, c, eitem)
 	return errors.WithStack(err)
@@ -85,7 +83,6 @@ func (a *RoleMenu) Update(ctx context.Context, id string, item schema.RoleMenu) 
 	err := Update(ctx, c, DefaultFilter(ctx, Filter("_id", id)), eitem)
 	return errors.WithStack(err)
 }
-
 
 func (a *RoleMenu) Delete(ctx context.Context, id string) error {
 	c := entity.GetRoleMenuCollection(ctx, a.Client)

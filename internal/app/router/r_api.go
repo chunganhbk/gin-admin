@@ -41,11 +41,11 @@ func RegisterAPI(r *gin.Engine, container *dig.Container) error {
 				auth.POST("/register", cAuth.Register)
 
 			}
-			gCurrent := v1.Group("pub") //public api
+			gCurrent := v1.Group("/pub") //public api
 			{
-				gCurrent.PUT("password", cUser.ChangePassword)
-				gCurrent.GET("user", cUser.GetUserInfo)
-				gCurrent.GET("menutree", cUser.QueryUserMenuTree)
+				gCurrent.PUT("/password", cUser.ChangePassword)
+				gCurrent.GET("/user", cUser.GetUserInfo)
+				gCurrent.GET("/menu-tree", cUser.QueryUserMenuTree)
 				gCurrent.POST("/refresh-token", cAuth.RefreshToken)
 			}
 

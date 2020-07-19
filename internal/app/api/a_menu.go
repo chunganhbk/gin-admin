@@ -1,11 +1,10 @@
 package api
 
 import (
-	"github.com/chunganhbk/gin-go/internal/app/services"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/internal/app/services"
 	"github.com/chunganhbk/gin-go/pkg/app"
 	"github.com/gin-gonic/gin"
-
 )
 
 // Menu
@@ -13,9 +12,10 @@ type Menu struct {
 	MenuService services.IMenuService
 }
 
-func NewMenu( menuService services.IMenuService) *Menu{
+func NewMenu(menuService services.IMenuService) *Menu {
 	return &Menu{menuService}
 }
+
 // Query menu
 func (m *Menu) Query(c *gin.Context) {
 	ctx := c.Request.Context()
@@ -27,7 +27,7 @@ func (m *Menu) Query(c *gin.Context) {
 
 	params.Pagination = true
 	result, err := m.MenuService.Query(ctx, params, schema.MenuQueryOptions{
-		OrderFields: schema.NewOrderFields(schema.NewOrderField("sequence", schema.OrderByDESC)),
+		OrderFields: schema.NewOrderFields(schema.NewOrderField("order_number", schema.OrderByDESC)),
 	})
 	if err != nil {
 		app.ResError(c, err)

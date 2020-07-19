@@ -2,20 +2,18 @@ package gorm
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	entity "github.com/chunganhbk/gin-go/internal/app/models/gorm"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 )
-
-
 
 // RoleMenu
 type RoleMenu struct {
 	DB *gorm.DB
 }
 
-func NewRoleMenu(db *gorm.DB) *RoleMenu{
+func NewRoleMenu(db *gorm.DB) *RoleMenu {
 	return &RoleMenu{db}
 }
 func (a *RoleMenu) getQueryOption(opts ...schema.RoleMenuQueryOptions) schema.RoleMenuQueryOptions {
@@ -54,7 +52,7 @@ func (a *RoleMenu) Query(ctx context.Context, params schema.RoleMenuQueryParam, 
 	return qr, nil
 }
 
-// Get 查询指定数据
+// Get role menu
 func (a *RoleMenu) Get(ctx context.Context, id string, opts ...schema.RoleMenuQueryOptions) (*schema.RoleMenu, error) {
 	db := entity.GetRoleMenuDB(ctx, a.DB).Where("id=?", id)
 	var item entity.RoleMenu
