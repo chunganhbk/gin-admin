@@ -47,7 +47,7 @@ func TestUser(t *testing.T) {
 
 	// post /users
 	addItem := &schema.User{
-		Email:    fmt.Printf("%s@gmail.com", unique.MustUUID().String()),
+		Email:    fmt.Sprintf("%s, @gmail.com", unique.MustUUID().String()),
 		FullName: unique.MustUUID().String(),
 		Status:   1,
 		Password: util.BcryptPwd("test"),
@@ -75,7 +75,7 @@ func TestUser(t *testing.T) {
 
 	// put /users/:id
 	putItem := getItem
-	putItem.Email = fmt.Printf("%s@gmail.com", unique.MustUUID().String())
+	putItem.Email = fmt.Sprintf("%s, @gmail.com", unique.MustUUID().String())
 	engine.ServeHTTP(w, newPutRequest("%s/%s", putItem, router, getItem.ID))
 	assert.Equal(t, 200, w.Code)
 	err = parseOK(w.Body)

@@ -88,9 +88,12 @@ ConfigDir = ""
 [JWTAuth]
 Enable = true
 # Signing Key
-SigningKey = "gin-admin"
+SigningKey = "gin-go"
 # Expired time (in seconds)
 Expired = 7200
+SigningRefreshKey =  "gin-go-refresh"
+# Expired time (in hours)
+ExpiredRefreshToken = 24
 
 [CORS]
 # Whether to enable

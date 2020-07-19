@@ -7,6 +7,9 @@ type LoginParam struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
+type RefreshTokenParam struct {
+	RefreshToken string `json:"refresh_token" binding:"required"`
+}
 type RegisterUser struct {
 	FirstName string `json:"first_name" binding:"required"`
 	LastName  string `json:"last_name" binding:"required"`
@@ -41,7 +44,8 @@ type UpdatePasswordParam struct {
 
 // Login Token Info
 type LoginTokenInfo struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresAt   int64  `json:"expires_at"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	TokenType    string `json:"token_type"`
+	ExpiresAt    int64  `json:"expires_at"`
 }

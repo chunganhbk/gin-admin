@@ -26,7 +26,7 @@ func RegisterAPI(r *gin.Engine, container *dig.Container) error {
 		g := r.Group("/api")
 
 		g.Use(middleware.UserAuthMiddleware(jwt,
-			middleware.AllowPathPrefixSkipper("/api/v1/auth"),
+			middleware.AllowPathPrefixSkipper("/api/v1/auth", "/api/v1/pub/refresh-token"),
 		))
 
 		g.Use(middleware.CasbinMiddleware(e,
@@ -37,7 +37,7 @@ func RegisterAPI(r *gin.Engine, container *dig.Container) error {
 		{
 			auth := v1.Group("/auth")
 			{
-				auth.POST("/login",cAuth.Login)
+				auth.POST("/login", cAuth.Login)
 				auth.POST("/register", cAuth.Register)
 
 			}

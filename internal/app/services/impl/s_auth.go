@@ -25,7 +25,7 @@ func (a *AuthService) Verify(ctx context.Context, email string, password string)
 	result, err := a.UserRp.Query(ctx, schema.UserQueryParam{
 		Email: email,
 	})
-	println("data %v", result.Data[0].Email)
+
 	if err != nil {
 		return nil, err
 	} else if len(result.Data) == 0 {
@@ -33,7 +33,7 @@ func (a *AuthService) Verify(ctx context.Context, email string, password string)
 	}
 
 	item := result.Data[0]
-	if util.ComparePasswords(password, item.Password) {
+	if !util.ComparePasswords(password, item.Password) {
 		return nil, errors.New400Response(errors.ERROR_LOGIN_FAILED)
 	} else if item.Status != 1 {
 		return nil, errors.New400Response(errors.ERROR_USER_DISABLED)
@@ -50,9 +50,27 @@ func (a *AuthService) GenerateToken(userID string) (*schema.LoginTokenInfo, erro
 	}
 
 	item := &schema.LoginTokenInfo{
-		AccessToken: tokenInfo.GetAccessToken(),
-		TokenType:   tokenInfo.GetTokenType(),
-		ExpiresAt:   tokenInfo.GetExpiresAt(),
+		AccessToken:  tokenInfo.GetAccessToken(),
+		RefreshToken: tokenInfo.GetRefreshToken(),
+		TokenType:    tokenInfo.GetTokenType(),
+		ExpiresAt:    tokenInfo.GetExpiresAt(),
+	}
+	return item, nil
+}
+
+//refresh token
+
+func (a *AuthService) RefreshToken(refreshToken string) (*schema.LoginTokenInfo, error) {
+	tokenInfo, err := a.Jwt.RefreshToken(refreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	item := &schema.LoginTokenInfo{
+		AccessToken:  tokenInfo.GetAccessToken(),
+		RefreshToken: tokenInfo.GetRefreshToken(),
+		TokenType:    tokenInfo.GetTokenType(),
+		ExpiresAt:    tokenInfo.GetExpiresAt(),
 	}
 	return item, nil
 }

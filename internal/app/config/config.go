@@ -147,8 +147,10 @@ type LogMongoHook struct {
 
 // JWTAuth
 type JWTAuth struct {
-	SigningKey string
-	Expired    int
+	SigningKey          string
+	Expired             int //Seconds
+	SigningRefreshKey   string
+	ExpiredRefreshToken int //hours
 }
 
 // HTTP http

@@ -50,9 +50,14 @@ func (a *Auth) Login(c *gin.Context) {
 	app.ResSuccess(c, tokenInfo)
 }
 
-// RefreshToken
+// Refresh Token
 func (a *Auth) RefreshToken(c *gin.Context) {
-	tokenInfo, err := a.AuthService.GenerateToken(app.GetUserID(c))
+	var item schema.RefreshTokenParam
+	if err := app.ParseJSON(c, &item); err != nil {
+		app.ResError(c, err)
+		return
+	}
+	tokenInfo, err := a.AuthService.RefreshToken(item.RefreshToken)
 	if err != nil {
 		app.ResError(c, err)
 		return

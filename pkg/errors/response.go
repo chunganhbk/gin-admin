@@ -22,6 +22,9 @@ func (r *ResponseError) Error() string {
 func Wrap400Response(err error) error {
 	return WrapResponse(err, INVALID_PARAMS, INVALID_PARAMS, err.Error())
 }
+func WrapUnauthorized(err error) error {
+	return WrapResponse(err, http.StatusUnauthorized, ERROR_AUTH_CHECK_TOKEN_FAIL, err.Error())
+}
 func Wrap500Response(err error, errorCode int, args ...interface{}) error {
 	return WrapResponse(err, ERROR, errorCode, args...)
 }

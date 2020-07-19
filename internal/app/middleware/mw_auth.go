@@ -24,7 +24,7 @@ func UserAuthMiddleware(a jwt.IJWTAuth, skippers ...SkipperFunc) gin.HandlerFunc
 			return
 		}
 
-		userID, err := a.ParseUserID(app.GetToken(c))
+		userID, err := a.ParseUserID(app.GetToken(c), false)
 		if err != nil {
 			app.ResError(c, err)
 			return
