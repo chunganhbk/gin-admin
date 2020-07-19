@@ -25,7 +25,6 @@ func (a SchemaUser) ToUser() *User {
 // User
 type User struct {
 	Model
-	UserName  string  `gorm:"column:user_name;size:64;index;default:'';not null;"`
 	FullName  string  `gorm:"column:full_name;size:100;default:'';not null;"`
 	FirstName string  `gorm:"column:first_name;size:64;default:'';not null;"`
 	LastName  string  `gorm:"column:last_name;size:64;default:'';not null;"`
