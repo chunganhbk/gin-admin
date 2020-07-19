@@ -1,14 +1,13 @@
 package test
 
 import (
-	"golang.org/x/tools/go/ssa/interp/testdata/src/fmt"
-	"net/http/httptest"
-	"testing"
-
+	"fmt"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/chunganhbk/gin-go/pkg/unique"
 	"github.com/chunganhbk/gin-go/pkg/util"
 	"github.com/stretchr/testify/assert"
+	"net/http/httptest"
+	"testing"
 )
 
 func TestUser(t *testing.T) {
@@ -47,7 +46,7 @@ func TestUser(t *testing.T) {
 
 	// post /users
 	addItem := &schema.User{
-		Email:    fmt.Sprintf("%s, @gmail.com", unique.MustUUID().String()),
+		Email:    fmt.Sprintf("%s@gmail.com", unique.MustUUID().String()),
 		FullName: unique.MustUUID().String(),
 		Status:   1,
 		Password: util.BcryptPwd("test"),
@@ -75,7 +74,7 @@ func TestUser(t *testing.T) {
 
 	// put /users/:id
 	putItem := getItem
-	putItem.Email = fmt.Sprintf("%s, @gmail.com", unique.MustUUID().String())
+	putItem.Email = fmt.Sprintf("%s@gmail.com", unique.MustUUID().String())
 	engine.ServeHTTP(w, newPutRequest("%s/%s", putItem, router, getItem.ID))
 	assert.Equal(t, 200, w.Code)
 	err = parseOK(w.Body)

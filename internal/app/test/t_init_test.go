@@ -17,7 +17,7 @@ import (
 
 const (
 	configFile = "../../../configs/config.toml"
-	modelFile  = "../../../configs/models.conf"
+	modelFile  = "../../../configs/model.conf"
 	apiPrefix  = "/api/"
 )
 
