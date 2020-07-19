@@ -10,8 +10,7 @@ RBAC scaffolding based on Gin + GROM + Casbin + Dig
 │   └── app               # Your Application
 │       ├── api           # api
 │       ├── config        # Config's Structure
-│       ├── context       #
-│       ├── errors        # Errors
+│       ├── icontext      # 
 │       ├── middleware    # Gin's Middleware
 │       ├── models        # Model gorm mongodb
 │       ├── repositories  # Repository DB
@@ -24,3 +23,11 @@ RBAC scaffolding based on Gin + GROM + Casbin + Dig
     ├── jwt               # JWT Auth
     ├── logger            # Logers
     └── utils             # Utilities
+```
+##Start project
+```bash
+make start 
+go run cmd/server/main.go web -c ./configs/config.toml -m ./configs/model.conf --menu ./configs/menu.yaml
+```
+
+
