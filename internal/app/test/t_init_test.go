@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/chunganhbk/gin-go/internal/app"
+	"github.com/chunganhbk/gin-go/internal/app/router"
 	"io"
 	"net/http"
 	"net/url"
@@ -22,24 +24,20 @@ const (
 var engine *gin.Engine
 
 func init() {
-	// 初始化配置文件
+
 	config.MustLoad(configFile)
 
 	config.C.RunMode = "test"
 	config.C.Log.Level = 2
-	config.C.Casbin.Enable = false
 	config.C.Casbin.Model = modelFile
-	config.C.Gorm.Debug = false
+	config.C.Gorm.Debug = true
 	config.C.Gorm.DBType = "sqlite3"
 
-	injector, _, err := injector.BuildInjector()
-	if err != nil {
-		panic(err)
-	}
-	engine = injector.Engine
+	container, _ := app.BuildContainer()
+	engine = router.InitGinEngine(container)
 }
 
-// ResID 响应唯一标识
+// ResID
 type ResID struct {
 	ID string `json:"id,omitempty"`
 }

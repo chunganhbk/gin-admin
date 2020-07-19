@@ -18,9 +18,6 @@ start:
 swagger:
 	swag init --generalInfo ./internal/app/swagger.go --output ./internal/app/swagger
 
-wire:
-	wire gen ./internal/app/injector
-
 test:
 	@go test -v $(shell go list ./...)
 

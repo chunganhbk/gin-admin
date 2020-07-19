@@ -1,6 +1,7 @@
 package test
 
 import (
+	"golang.org/x/tools/go/ssa/interp/testdata/src/fmt"
 	"net/http/httptest"
 	"testing"
 
@@ -46,10 +47,10 @@ func TestUser(t *testing.T) {
 
 	// post /users
 	addItem := &schema.User{
-		UserName: unique.MustUUID().String(),
-		RealName: unique.MustUUID().String(),
+		Email:    fmt.Printf("%s@gmail.com", unique.MustUUID().String()),
+		FullName: unique.MustUUID().String(),
 		Status:   1,
-		Password: util.MD5HashString("test"),
+		Password: util.BcryptPwd("test"),
 		UserRoles: schema.UserRoles{
 			&schema.UserRole{
 				RoleID: addRoleItemRes.ID,
@@ -68,13 +69,13 @@ func TestUser(t *testing.T) {
 	var getItem schema.User
 	err = parseReader(w.Body, &getItem)
 	assert.Nil(t, err)
-	assert.Equal(t, addItem.UserName, getItem.UserName)
+	assert.Equal(t, addItem.Email, getItem.FullName)
 	assert.Equal(t, addItem.Status, getItem.Status)
 	assert.NotEmpty(t, getItem.ID)
 
 	// put /users/:id
 	putItem := getItem
-	putItem.UserName = unique.MustUUID().String()
+	putItem.Email = fmt.Printf("%s@gmail.com", unique.MustUUID().String())
 	engine.ServeHTTP(w, newPutRequest("%s/%s", putItem, router, getItem.ID))
 	assert.Equal(t, 200, w.Code)
 	err = parseOK(w.Body)
@@ -89,7 +90,7 @@ func TestUser(t *testing.T) {
 	assert.GreaterOrEqual(t, len(pageItems), 1)
 	if len(pageItems) > 0 {
 		assert.Equal(t, putItem.ID, pageItems[0].ID)
-		assert.Equal(t, putItem.UserName, pageItems[0].UserName)
+		assert.Equal(t, putItem.Email, pageItems[0].Email)
 	}
 
 	// delete /users/:id
