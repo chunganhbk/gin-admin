@@ -1,11 +1,10 @@
 # gin-go
-RBAC scaffolding based on Gin + GROM + Casbin + Dig
+RBAC scaffolding based on Gin + Gorm/MongoDB + Casbin + Dig
 # Project Structure
 ```bash
 .
 ├── cmd
 │   └── server            # Main
-├── docs                  # Documents
 ├── internal
 │   └── app               # Your Application
 │       ├── api           # api
