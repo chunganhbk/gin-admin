@@ -19,6 +19,7 @@ const (
 	configFile = "../../../configs/config.toml"
 	modelFile  = "../../../configs/model.conf"
 	apiPrefix  = "/api/"
+	token      = ""
 )
 
 var engine *gin.Engine
@@ -52,15 +53,15 @@ func parseReader(r io.Reader, v interface{}) error {
 	return json.NewDecoder(r).Decode(v)
 }
 
-func parseOK(r io.Reader) error {
+func parseSuccess(r io.Reader) error {
 	var status struct {
-		Status string `json:"status"`
+		Status string `json:"msg"`
 	}
 	err := parseReader(r, &status)
 	if err != nil {
 		return err
 	}
-	if status.Status != "OK" {
+	if status.Status != "Success" {
 		return errors.New("not OK")
 	}
 	return nil
@@ -99,16 +100,19 @@ func parsePageReader(r io.Reader, v interface{}) error {
 
 func newPostRequest(formatRouter string, v interface{}, args ...interface{}) *http.Request {
 	req, _ := http.NewRequest("POST", fmt.Sprintf(formatRouter, args...), toReader(v))
+	req.Header.Add("Authorization", token)
 	return req
 }
 
 func newPutRequest(formatRouter string, v interface{}, args ...interface{}) *http.Request {
 	req, _ := http.NewRequest("PUT", fmt.Sprintf(formatRouter, args...), toReader(v))
+	req.Header.Add("Authorization", token)
 	return req
 }
 
 func newDeleteRequest(formatRouter string, args ...interface{}) *http.Request {
 	req, _ := http.NewRequest("DELETE", fmt.Sprintf(formatRouter, args...), nil)
+	req.Header.Add("Authorization", token)
 	return req
 }
 

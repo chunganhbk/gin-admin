@@ -77,7 +77,7 @@ func TestUser(t *testing.T) {
 	putItem.Email = fmt.Sprintf("%s@gmail.com", unique.MustUUID().String())
 	engine.ServeHTTP(w, newPutRequest("%s/%s", putItem, router, getItem.ID))
 	assert.Equal(t, 200, w.Code)
-	err = parseOK(w.Body)
+	err = parseSuccess(w.Body)
 	assert.Nil(t, err)
 
 	// query /users
@@ -95,18 +95,18 @@ func TestUser(t *testing.T) {
 	// delete /users/:id
 	engine.ServeHTTP(w, newDeleteRequest("%s/%s", router, addItemRes.ID))
 	assert.Equal(t, 200, w.Code)
-	err = parseOK(w.Body)
+	err = parseSuccess(w.Body)
 	assert.Nil(t, err)
 
 	// delete /roles/:id
 	engine.ServeHTTP(w, newDeleteRequest(apiPrefix+"v1/roles/%s", addRoleItemRes.ID))
 	assert.Equal(t, 200, w.Code)
-	err = parseOK(w.Body)
+	err = parseSuccess(w.Body)
 	assert.Nil(t, err)
 
 	// delete /menus/:id
 	engine.ServeHTTP(w, newDeleteRequest(apiPrefix+"v1/menus/%s", addMenuItemRes.ID))
 	assert.Equal(t, 200, w.Code)
-	err = parseOK(w.Body)
+	err = parseSuccess(w.Body)
 	assert.Nil(t, err)
 }

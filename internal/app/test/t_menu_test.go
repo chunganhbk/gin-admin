@@ -42,7 +42,7 @@ func TestMenu(t *testing.T) {
 	putItem.Name = unique.MustUUID().String()
 	engine.ServeHTTP(w, newPutRequest("%s/%s", putItem, router, getItem.ID))
 	assert.Equal(t, 200, w.Code)
-	err = parseOK(w.Body)
+	err = parseSuccess(w.Body)
 	assert.Nil(t, err)
 
 	// query /menus
@@ -60,6 +60,6 @@ func TestMenu(t *testing.T) {
 	// delete /menus/:id
 	engine.ServeHTTP(w, newDeleteRequest("%s/%s", router, addItemRes.ID))
 	assert.Equal(t, 200, w.Code)
-	err = parseOK(w.Body)
+	err = parseSuccess(w.Body)
 	assert.Nil(t, err)
 }
