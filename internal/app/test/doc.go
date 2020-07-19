@@ -1,7 +1,6 @@
 /*
-Package test 接口测试
+Package test
 
-使用方式：
 
 	go test -v
 */

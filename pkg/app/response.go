@@ -1,60 +1,35 @@
 package app
 
 import (
-	"fmt"
+	"net/http"
+
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/pkg/errors"
 	"github.com/chunganhbk/gin-go/pkg/logger"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
+
 type Response struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data,omitempty"`
 	ERR  error       `json:"err,omitempty"`
 }
-const (
-	SUCCESS                        = 200
-	ERROR                          = 500
-	INVALID_PARAMS                 = 400
-	ERROR_BAD_REQUEST              = 421
-	ERROR_NO_PERRMISSION           = 403
-	ERROR_NOT_FOUND                = 404
-	ERROR_METHOD_NOT_ALLOW         = 405
-	ERROR_INVALID_PARENT           = 409
-	ERROR_ALLOW_DELETE_WITH_CHILD  = 410
-	ERROR_NOT_ALLOW_DELETE         = 411
-	ERROR_USER_DISABLED            = 412
-	ERROR_EXIST_MENU_NAME          = 413
-	ERROR_EXIST_ROLE               = 414
-	ERROR_EXIST_ROLE_USER          = 415
-	ERROR_NOT_EXIST_USER           = 416
-	ERROR_LOGIN_FAILED             = 422
-	ERROR_INVALID_OLD_PASS         = 423
-	ERROR_PASSWORD_REQUIRED        = 424
-	ERROR_TOO_MANY_REQUEST         = 429
-	ERROR_INTERNAL_SERVER          = 512
-	ERROR_AUTH_CHECK_TOKEN_FAIL    = 401
-	ERROR_AUTH_CHECK_TOKEN_TIMEOUT = 402
-	ERROR_AUTH_TOKEN               = 408
-	ERROR_AUTH                     = 407
-	ERROR_EXIST_EMAIL              = 430
-)
+
+var OK = "Success"
 
 func ResError(c *gin.Context, err error, status ...int) {
 	ctx := c.Request.Context()
-	println("err", &err, err)
-	var res *ResponseError
+
+	var res *errors.ResponseError
 	if err != nil {
-		if e, ok := err.(*ResponseError); ok {
+		if e, ok := err.(*errors.ResponseError); ok {
 			res = e
 		} else {
-			res.Code = ERROR
-			res.StatusCode = ERROR
+			res = errors.UnWrapResponse(errors.Wrap500Response(err, errors.ERROR))
 		}
 	} else {
-		res.Code = ERROR_INTERNAL_SERVER
-		res.StatusCode = ERROR
+		res = errors.UnWrapResponse(errors.ErrInternalServer)
 	}
 
 	if len(status) > 0 {
@@ -68,7 +43,7 @@ func ResError(c *gin.Context, err error, status ...int) {
 			logger.ErrorStack(ctx, err)
 		}
 	}
-	ResJSON(c, res.StatusCode,  res.Code, nil, err)
+	ResJSON(c, res.StatusCode, Response{Code: res.Code, Msg: res.Message, ERR: res.ERR})
 }
 func ResPage(c *gin.Context, v interface{}, pr *schema.PaginationResult) {
 	list := schema.ListResult{
@@ -79,29 +54,21 @@ func ResPage(c *gin.Context, v interface{}, pr *schema.PaginationResult) {
 
 }
 func ResSuccess(c *gin.Context, v interface{}) {
-	ResJSON(c, http.StatusOK, SUCCESS, v, nil)
+	ResJSON(c, http.StatusOK,
+		Response{
+			Code: http.StatusOK,
+			Msg:  OK,
+			Data: v,
+		})
 }
 func ResList(c *gin.Context, v interface{}) {
 	ResSuccess(c, schema.ListResult{List: v})
 }
-func ResOK(c *gin.Context){
+func ResOK(c *gin.Context) {
 	ResSuccess(c, nil)
 }
-func ResJSON(c *gin.Context, httpCode, errCode int, data interface{}, err error) {
-
-	if httpCode >= http.StatusBadRequest && httpCode < http.StatusInternalServerError{
-		c.JSON(httpCode, Response{
-			Code: errCode,
-			Msg:  fmt.Sprintf(GetMsg(errCode), err.Error()),
-			Data: data,
-		})
-		return
-	}
-	c.JSON(httpCode, Response{
-		Code: errCode,
-		Msg: GetMsg(errCode),
-		Data: data,
-		ERR:  err,
-	})
+func ResJSON(c *gin.Context, httpCode int, res Response) {
+	c.JSON(httpCode, res)
+	c.AbortWithStatus(httpCode)
 	return
 }

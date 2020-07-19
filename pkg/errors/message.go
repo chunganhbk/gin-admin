@@ -1,6 +1,4 @@
-package app
-
-
+package errors
 
 var MsgFlags = map[int]string{
 	SUCCESS:                        "ok",
@@ -26,9 +24,12 @@ var MsgFlags = map[int]string{
 	ERROR_TOO_MANY_REQUEST:         "Requests are too frequent",
 	ERROR_LOGIN_FAILED:             "Email or password is invalid",
 	ERROR_EXIST_ROLE:               "Role name already exists",
-	ERROR_NOT_EXIST_USER:            "Account is invalid",
+	ERROR_NOT_EXIST_USER:           "Account is invalid",
 	ERROR_EXIST_ROLE_USER:          "The role has been given to the user and is not allowed to be deleted",
-
+	ERROR_NOT_EXIST_ROLE:           "Role user is disabled, please contact administrator",
+	ERROR_TOKEN_EXPIRED:            "Token is expired",
+	ERROR_TOKEN_INVALID:            "Token not active yet",
+	ERROR_TOKEN_MALFORMALED:        "That's not even a token",
 }
 
 // GetMsg get error information based on Code
@@ -39,5 +40,3 @@ func GetMsg(code int) string {
 	}
 	return MsgFlags[ERROR]
 }
-
-

@@ -2,15 +2,13 @@ package impl
 
 import (
 	"context"
-	"github.com/chunganhbk/gin-go/internal/app/repositories"
-	"github.com/chunganhbk/gin-go/pkg/app"
-	"os"
 	"github.com/chunganhbk/gin-go/internal/app/iutil"
+	"github.com/chunganhbk/gin-go/internal/app/repositories"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/pkg/errors"
 	"github.com/chunganhbk/gin-go/pkg/util"
+	"os"
 )
-
-
 
 // Menu
 type MenuService struct {
@@ -22,9 +20,10 @@ type MenuService struct {
 
 func NewMenuService(transRp repositories.ITrans, menuRp repositories.IMenu,
 	menuActionRp repositories.IMenuAction,
-	menuActionResourceRp repositories.IMenuActionResource) *MenuService{
+	menuActionResourceRp repositories.IMenuActionResource) *MenuService {
 	return &MenuService{transRp, menuRp, menuActionRp, menuActionResourceRp}
 }
+
 // InitData
 func (m *MenuService) InitData(ctx context.Context, dataFile string) error {
 	result, err := m.MenuRp.Query(ctx, schema.MenuQueryParam{
@@ -113,7 +112,7 @@ func (m *MenuService) Get(ctx context.Context, id string, opts ...schema.MenuQue
 	if err != nil {
 		return nil, err
 	} else if item == nil {
-		return nil, app.ResponseNotFound()
+		return nil, errors.ErrNotFound
 	}
 
 	actions, err := m.QueryActions(ctx, id)
@@ -159,7 +158,7 @@ func (m *MenuService) checkName(ctx context.Context, item schema.Menu) error {
 	if err != nil {
 		return err
 	} else if result.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_EXIST_MENU_NAME, nil)
+		return errors.New400Response(errors.ERROR_EXIST_MENU_NAME)
 	}
 	return nil
 }
@@ -215,7 +214,6 @@ func (m *MenuService) createActions(ctx context.Context, menuID string, items sc
 	return nil
 }
 
-
 func (m *MenuService) getParentPath(ctx context.Context, parentID string) (string, error) {
 	if parentID == "" {
 		return "", nil
@@ -225,7 +223,7 @@ func (m *MenuService) getParentPath(ctx context.Context, parentID string) (strin
 	if err != nil {
 		return "", err
 	} else if pitem == nil {
-		return "", app.New400Response(app.ERROR_INVALID_PARENT, nil)
+		return "", errors.New400Response(errors.ERROR_INVALID_PARENT)
 	}
 
 	return m.joinParentPath(pitem.ParentPath, pitem.ID), nil
@@ -241,14 +239,14 @@ func (m *MenuService) joinParentPath(parent, id string) string {
 // Update menu
 func (m *MenuService) Update(ctx context.Context, id string, item schema.Menu) error {
 	if id == item.ParentID {
-		return app.New400Response(app.ERROR_INVALID_PARENT, nil)
+		return errors.New400Response(errors.ERROR_INVALID_PARENT)
 	}
 
 	oldItem, err := m.Get(ctx, id)
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return app.ResponseNotFound()
+		return errors.ErrNotFound
 	} else if oldItem.Name != item.Name {
 		if err := m.checkName(ctx, item); err != nil {
 			return err
@@ -317,7 +315,6 @@ func (m *MenuService) updateActions(ctx context.Context, menuID string, oldItems
 			}
 		}
 
-
 		addResources, delResources := m.compareResources(ctx, oitem.Resources, item.Resources)
 		for _, aritem := range addResources {
 			aritem.ID = iutil.NewID()
@@ -339,7 +336,6 @@ func (m *MenuService) updateActions(ctx context.Context, menuID string, oldItems
 	return nil
 }
 
-
 func (m *MenuService) compareActions(ctx context.Context, oldActions, newActions schema.MenuActions) (addList, delList, updateList schema.MenuActions) {
 	mOldActions := oldActions.ToMap()
 	mNewActions := newActions.ToMap()
@@ -359,7 +355,6 @@ func (m *MenuService) compareActions(ctx context.Context, oldActions, newActions
 	return
 }
 
-
 func (m *MenuService) compareResources(ctx context.Context, oldResources, newResources schema.MenuActionResources) (addList, delList schema.MenuActionResources) {
 	mOldResources := oldResources.ToMap()
 	mNewResources := newResources.ToMap()
@@ -377,7 +372,6 @@ func (m *MenuService) compareResources(ctx context.Context, oldResources, newRes
 	}
 	return
 }
-
 
 func (m *MenuService) updateChildParentPath(ctx context.Context, oldItem, newItem schema.Menu) error {
 	if oldItem.ParentID == newItem.ParentID {
@@ -408,7 +402,7 @@ func (m *MenuService) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return app.ResponseNotFound()
+		return errors.ErrNotFound
 	}
 
 	result, err := m.MenuRp.Query(ctx, schema.MenuQueryParam{
@@ -418,7 +412,7 @@ func (m *MenuService) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	} else if result.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_ALLOW_DELETE_WITH_CHILD, nil)
+		return errors.New400Response(errors.ERROR_ALLOW_DELETE_WITH_CHILD)
 	}
 
 	return ExecTrans(ctx, m.TransRp, func(ctx context.Context) error {
@@ -442,7 +436,7 @@ func (m *MenuService) UpdateStatus(ctx context.Context, id string, status int) e
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return app.ResponseNotFound()
+		return errors.ErrNotFound
 	}
 
 	return m.MenuRp.UpdateStatus(ctx, id, status)

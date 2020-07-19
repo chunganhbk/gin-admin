@@ -6,7 +6,7 @@ import "time"
 type Role struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name" binding:"required"`
-	Sequence  int       `json:"sequence"`
+	Order     int       `json:"order"`
 	Memo      string    `json:"memo"`
 	Status    int       `json:"status" binding:"required,max=2,min=1"`
 	Creator   string    `json:"creator"`
@@ -15,7 +15,7 @@ type Role struct {
 	RoleMenus RoleMenus `json:"role_menus" binding:"required,gt=0"`
 }
 
-// RoleQueryParam 查询条件
+// RoleQueryParam
 type RoleQueryParam struct {
 	PaginationParam
 	IDs        []string `form:"-"`
@@ -25,21 +25,21 @@ type RoleQueryParam struct {
 	Status     int      `form:"status"`
 }
 
-// RoleQueryOptions
+// Role QueryOptions
 type RoleQueryOptions struct {
 	OrderFields []*OrderField
 }
 
-// RoleQueryResult
+// Role QueryResult
 type RoleQueryResult struct {
 	Data       Roles
 	PageResult *PaginationResult
 }
 
-// Roles 角色对象列表
+// Roles
 type Roles []*Role
 
-// ToNames 获取角色名称列表
+// ToNames
 func (a Roles) ToNames() []string {
 	names := make([]string, len(a))
 	for i, item := range a {
@@ -48,7 +48,7 @@ func (a Roles) ToNames() []string {
 	return names
 }
 
-// ToMap 转换为键值存储
+// ToMap
 func (a Roles) ToMap() map[string]*Role {
 	m := make(map[string]*Role)
 	for _, item := range a {
@@ -66,19 +66,20 @@ type RoleMenu struct {
 	MenuID   string `json:"menu_id" binding:"required"`
 	ActionID string `json:"action_id" binding:"required"`
 }
-// RoleMenu Query Param
+
+// RoleMenu QueryParam
 type RoleMenuQueryParam struct {
 	PaginationParam
 	RoleID  string
 	RoleIDs []string
 }
 
-// RoleMenuQueryOptions
+// RoleMenu QueryOptions
 type RoleMenuQueryOptions struct {
 	OrderFields []*OrderField
 }
 
-// RoleMenuQueryResult
+// RoleMenu QueryResult
 type RoleMenuQueryResult struct {
 	Data       RoleMenus
 	PageResult *PaginationResult

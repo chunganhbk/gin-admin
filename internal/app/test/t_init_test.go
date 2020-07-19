@@ -10,7 +10,6 @@ import (
 	"net/url"
 
 	"github.com/chunganhbk/gin-go/internal/app/config"
-	"github.com/chunganhbk/gin-go/internal/app/injector"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,7 +27,6 @@ func init() {
 
 	config.C.RunMode = "test"
 	config.C.Log.Level = 2
-	config.C.JWTAuth.Enable = false
 	config.C.Casbin.Enable = false
 	config.C.Casbin.Model = modelFile
 	config.C.Gorm.Debug = false

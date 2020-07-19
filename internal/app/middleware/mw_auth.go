@@ -6,7 +6,6 @@ import (
 	"github.com/chunganhbk/gin-go/pkg/jwt"
 	"github.com/chunganhbk/gin-go/pkg/logger"
 	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
 )
 
 func wrapUserAuthContext(c *gin.Context, userID string) {
@@ -27,11 +26,7 @@ func UserAuthMiddleware(a jwt.IJWTAuth, skippers ...SkipperFunc) gin.HandlerFunc
 
 		userID, err := a.ParseUserID(app.GetToken(c))
 		if err != nil {
-			if err == jwt.ErrInvalidToken {
-				app.ResError(c, app.NewStatusUnauthorized(app.ERROR_AUTH_CHECK_TOKEN_FAIL))
-				return
-			}
-			app.ResError(c, errors.WithStack(err))
+			app.ResError(c, err)
 			return
 		}
 		wrapUserAuthContext(c, userID)

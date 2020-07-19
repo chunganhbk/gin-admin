@@ -3,46 +3,122 @@ package impl
 import (
 	"context"
 	"fmt"
-	"github.com/chunganhbk/gin-go/internal/app/repositories"
-	"github.com/chunganhbk/gin-go/internal/app/iutil"
-	"github.com/chunganhbk/gin-go/internal/app/schema"
-	"github.com/chunganhbk/gin-go/pkg/app"
-	"github.com/chunganhbk/gin-go/pkg/util"
 	"github.com/casbin/casbin/v2"
+	"github.com/chunganhbk/gin-go/internal/app/iutil"
+	"github.com/chunganhbk/gin-go/internal/app/repositories"
+	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/pkg/errors"
+	"github.com/chunganhbk/gin-go/pkg/util"
 	"sort"
 )
 
 // UserService
 type UserService struct {
-	Enforcer       *casbin.SyncedEnforcer
-	TransRp        repositories.ITrans
-	UserRp         repositories.IUser
-	UserRoleRp     repositories.IUserRole
-	RoleRp         repositories.IRole
-	RoleMenuRp     repositories.IRoleMenu
-	MenuRp         repositories.IMenu
-	MenuActionRp         repositories.IMenuAction
+	Enforcer     *casbin.SyncedEnforcer
+	TransRp      repositories.ITrans
+	UserRp       repositories.IUser
+	UserRoleRp   repositories.IUserRole
+	RoleRp       repositories.IRole
+	RoleMenuRp   repositories.IRoleMenu
+	MenuRp       repositories.IMenu
+	MenuActionRp repositories.IMenuAction
 }
-func NewUserService (
-	enforcer      *casbin.SyncedEnforcer,
-	transRp    repositories.ITrans,
-	userRp     repositories.IUser,
+
+func NewUserService(
+	enforcer *casbin.SyncedEnforcer,
+	transRp repositories.ITrans,
+	userRp repositories.IUser,
 	userRoleRp repositories.IUserRole,
-	roleMenuRp     repositories.IRoleMenu,
-	menuRp         repositories.IMenu,
-	menuActionRp         repositories.IMenuAction,
-	roleRp     repositories.IRole) *UserService {
+	roleMenuRp repositories.IRoleMenu,
+	menuRp repositories.IMenu,
+	menuActionRp repositories.IMenuAction,
+	roleRp repositories.IRole) *UserService {
 	return &UserService{
-		Enforcer: enforcer,
-		TransRp: transRp,
-		RoleRp: roleRp,
-		UserRp: userRp,
-		UserRoleRp: userRoleRp,
-		RoleMenuRp: roleMenuRp,
-		MenuRp: menuRp,
+		Enforcer:     enforcer,
+		TransRp:      transRp,
+		RoleRp:       roleRp,
+		UserRp:       userRp,
+		UserRoleRp:   userRoleRp,
+		RoleMenuRp:   roleMenuRp,
+		MenuRp:       menuRp,
 		MenuActionRp: menuActionRp,
 	}
 }
+func (u *UserService) InitData(ctx context.Context) error {
+	result, err := u.UserRp.Query(ctx, schema.UserQueryParam{
+		PaginationParam: schema.PaginationParam{OnlyCount: true},
+	})
+	if err != nil {
+		return err
+	} else if result.PageResult.Total > 0 {
+		return nil
+	}
+	err = ExecTrans(ctx, u.TransRp, func(ctx context.Context) error {
+		roleSuperAdmin := schema.Role{
+			ID:     iutil.NewID(),
+			Name:   "Super Admin",
+			Order:  1,
+			Memo:   "Super admin",
+			Status: 1,
+		}
+		_ = u.RoleRp.Create(ctx, roleSuperAdmin)
+		roleUser := schema.Role{
+			ID:     iutil.NewID(),
+			Name:   "User",
+			Order:  2,
+			Memo:   "User login",
+			Status: 1,
+		}
+		_ = u.RoleRp.Create(ctx, roleUser)
+		userSuperAdmin := schema.User{
+			Email:     "super-admin@system.com",
+			FirstName: "Super",
+			LastName:  "Admin",
+			Password:  "123456",
+			FullName:  "Super Admin",
+			Status:    1,
+		}
+		user := schema.User{
+			Email:     "user@system.com",
+			FirstName: "User",
+			LastName:  "user",
+			Password:  "123456",
+			FullName:  "Super Admin",
+			Status:    1,
+		}
+		_ = u.UserRp.Create(ctx, userSuperAdmin)
+		_ = u.UserRp.Create(ctx, user)
+		//super admin
+		_ = u.UserRoleRp.Create(ctx, schema.UserRole{
+			ID:     iutil.NewID(),
+			UserID: userSuperAdmin.ID,
+			RoleID: userSuperAdmin.ID,
+		})
+		_ = u.UserRoleRp.Create(ctx, schema.UserRole{
+			ID:     iutil.NewID(),
+			UserID: user.ID,
+			RoleID: roleUser.ID,
+		})
+		return nil
+	})
+	LoadCasbinPolicy(ctx, u.Enforcer)
+	return err
+}
+
+func (u *UserService) Register(ctx context.Context, item schema.RegisterUser) (*schema.IDResult, error) {
+	result, err := u.RoleRp.Query(ctx, schema.RoleQueryParam{Name: "User", Status: 1,
+		PaginationParam: schema.PaginationParam{Pagination: true},
+	})
+	if err != nil {
+		return nil, err
+	} else if result.PageResult.Total == 0 {
+		return nil, errors.New400Response(errors.ERROR_NOT_EXIST_ROLE)
+	}
+	user := item.ToMapUser(*result)
+	user.Status = 1
+	return u.Create(ctx, *user)
+}
+
 // Query
 func (u *UserService) Query(ctx context.Context, params schema.UserQueryParam, opts ...schema.UserQueryOptions) (*schema.UserQueryResult, error) {
 	return u.UserRp.Query(ctx, params, opts...)
@@ -80,7 +156,7 @@ func (u *UserService) Get(ctx context.Context, id string, opts ...schema.UserQue
 	if err != nil {
 		return nil, err
 	} else if item == nil {
-		return nil, app.ResponseNotFound()
+		return nil, errors.ErrNotFound
 	}
 
 	userRoleResult, err := u.UserRoleRp.Query(ctx, schema.UserRoleQueryParam{
@@ -102,7 +178,7 @@ func (u *UserService) Create(ctx context.Context, item schema.User) (*schema.IDR
 	}
 
 	item.Password = util.BcryptPwd(item.Password)
-	item.FullName = fmt.Sprintf("%s %s", item.FirstName, item.LastName);
+	item.FullName = fmt.Sprintf("%s %s", item.FirstName, item.LastName)
 	item.ID = iutil.NewID()
 	err = ExecTrans(ctx, u.TransRp, func(ctx context.Context) error {
 		for _, urItem := range item.UserRoles {
@@ -126,15 +202,14 @@ func (u *UserService) Create(ctx context.Context, item schema.User) (*schema.IDR
 
 func (u *UserService) checkEmail(ctx context.Context, item schema.User) error {
 
-
 	result, err := u.UserRp.Query(ctx, schema.UserQueryParam{
 		PaginationParam: schema.PaginationParam{OnlyCount: true},
-		Email:        item.Email,
+		Email:           item.Email,
 	})
 	if err != nil {
 		return err
 	} else if result.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_EXIST_EMAIL, nil)
+		return errors.New400Response(errors.ERROR_EXIST_EMAIL)
 	}
 	return nil
 }
@@ -145,7 +220,7 @@ func (u *UserService) Update(ctx context.Context, id string, item schema.User) e
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return app.ResponseNotFound()
+		return errors.ErrNotFound
 	} else if oldItem.Email != item.Email {
 		err := u.checkEmail(ctx, item)
 		if err != nil {
@@ -214,7 +289,7 @@ func (u *UserService) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return app.ResponseNotFound()
+		return errors.ErrNotFound
 	}
 
 	err = ExecTrans(ctx, u.TransRp, func(ctx context.Context) error {
@@ -239,7 +314,7 @@ func (u *UserService) UpdateStatus(ctx context.Context, id string, status int) e
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return app.ResponseNotFound()
+		return errors.ErrNotFound
 	}
 	oldItem.Status = status
 
@@ -256,9 +331,9 @@ func (u *UserService) checkAndGetUser(ctx context.Context, userID string) (*sche
 	if err != nil {
 		return nil, err
 	} else if user == nil {
-		return nil, app.New400Response(app.ERROR_NOT_EXIST_USER, nil)
+		return nil, errors.New400Response(errors.ERROR_NOT_EXIST_USER)
 	} else if user.Status != 1 {
-		return nil, app.New400Response(app.ERROR_USER_DISABLED, nil)
+		return nil, errors.New400Response(errors.ERROR_USER_DISABLED)
 	}
 	return user, nil
 }
@@ -273,7 +348,7 @@ func (u *UserService) GetLoginInfo(ctx context.Context, userID string) (*schema.
 
 	info := &schema.UserLoginInfo{
 		UserID:   user.ID,
-		Email: user.Email,
+		Email:    user.Email,
 		FullName: user.FullName,
 	}
 
@@ -301,14 +376,13 @@ func (u *UserService) GetLoginInfo(ctx context.Context, userID string) (*schema.
 // Query UserMenu Tree
 func (u *UserService) QueryUserMenuTree(ctx context.Context, userID string) (schema.MenuTrees, error) {
 
-
 	userRoleResult, err := u.UserRoleRp.Query(ctx, schema.UserRoleQueryParam{
 		UserID: userID,
 	})
 	if err != nil {
 		return nil, err
 	} else if len(userRoleResult.Data) == 0 {
-		return nil, app.NoPermissionResponse()
+		return nil, errors.ErrNoPermission
 	}
 
 	roleMenuResult, err := u.RoleMenuRp.Query(ctx, schema.RoleMenuQueryParam{
@@ -317,7 +391,7 @@ func (u *UserService) QueryUserMenuTree(ctx context.Context, userID string) (sch
 	if err != nil {
 		return nil, err
 	} else if len(roleMenuResult.Data) == 0 {
-		return nil, app.NoPermissionResponse()
+		return nil, errors.ErrNoPermission
 	}
 
 	menuResult, err := u.MenuRp.Query(ctx, schema.MenuQueryParam{
@@ -327,7 +401,7 @@ func (u *UserService) QueryUserMenuTree(ctx context.Context, userID string) (sch
 	if err != nil {
 		return nil, err
 	} else if len(menuResult.Data) == 0 {
-		return nil, app.NoPermissionResponse()
+		return nil, errors.ErrNoPermission
 	}
 
 	mData := menuResult.Data.ToMap()
@@ -361,12 +435,11 @@ func (u *UserService) QueryUserMenuTree(ctx context.Context, userID string) (sch
 // Update Password
 func (u *UserService) ChangePassword(ctx context.Context, userID string, params schema.UpdatePasswordParam) error {
 
-
 	user, err := u.checkAndGetUser(ctx, userID)
 	if err != nil {
 		return err
 	} else if util.ComparePasswords(user.Password, params.OldPassword) {
-		return app.New400Response(app.ERROR_INVALID_OLD_PASS, nil)
+		return errors.New400Response(errors.ERROR_INVALID_OLD_PASS)
 	}
 
 	params.NewPassword = util.BcryptPwd(params.NewPassword)

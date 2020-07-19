@@ -1,21 +1,23 @@
 package api
 
 import (
-	"github.com/chunganhbk/gin-go/pkg/app"
-	"strings"
-	"github.com/chunganhbk/gin-go/internal/app/services"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/internal/app/services"
+	"github.com/chunganhbk/gin-go/pkg/app"
+	"github.com/chunganhbk/gin-go/pkg/errors"
 	"github.com/gin-gonic/gin"
-
+	"strings"
 )
+
 // User
 type User struct {
 	UserService services.IUserService
 }
 
-func NewUser(userService services.IUserService) *User{
+func NewUser(userService services.IUserService) *User {
 	return &User{userService}
 }
+
 // Get User Info
 func (u *User) GetUserInfo(c *gin.Context) {
 	ctx := c.Request.Context()
@@ -54,6 +56,7 @@ func (u *User) ChangePassword(c *gin.Context) {
 	}
 	app.ResOK(c)
 }
+
 // Query user list
 func (a *User) Query(c *gin.Context) {
 	ctx := c.Request.Context()
@@ -94,7 +97,7 @@ func (a *User) Create(c *gin.Context) {
 		app.ResError(c, err)
 		return
 	} else if item.Password == "" {
-		app.ResError(c, app.New400Response(app.ERROR_PASSWORD_REQUIRED, nil))
+		app.ResError(c, errors.New400Response(errors.ERROR_NOT_EXIST_USER))
 		return
 	}
 

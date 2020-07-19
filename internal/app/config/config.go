@@ -2,15 +2,14 @@ package config
 
 import (
 	"fmt"
+	"github.com/chunganhbk/gin-go/pkg/util"
+	"github.com/koding/multiconfig"
 	"os"
 	"strings"
 	"sync"
-	"github.com/chunganhbk/gin-go/pkg/util"
-	"github.com/koding/multiconfig"
 )
 
 var (
-
 	C    = new(Config)
 	once sync.Once
 )
@@ -146,14 +145,13 @@ type LogMongoHook struct {
 	Collection string
 }
 
-
 // JWTAuth
 type JWTAuth struct {
-	SigningKey    string
-	Expired       int
+	SigningKey string
+	Expired    int
 }
 
-// HTTP http配置参数
+// HTTP http
 type HTTP struct {
 	Host             string
 	Port             int
@@ -169,8 +167,6 @@ type Monitor struct {
 	Addr      string
 	ConfigDir string
 }
-
-
 
 // CORS
 type CORS struct {
@@ -188,8 +184,6 @@ type GZIP struct {
 	ExcludedExtentions []string
 	ExcludedPaths      []string
 }
-
-
 
 // Gorm gorm
 type Gorm struct {

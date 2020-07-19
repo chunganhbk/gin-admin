@@ -3,21 +3,24 @@ package middleware
 import (
 	"fmt"
 	"github.com/chunganhbk/gin-go/pkg/app"
-	"strings"
+	"github.com/chunganhbk/gin-go/pkg/errors"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 // No Method Handler
 func NoMethodHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		app.ResError(c, app.MethodNotAllowResponse())
+		app.ResError(c, errors.ErrNotFound)
+
 	}
 }
 
 // No Route Handler
 func NoRouteHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		app.ResError(c, app.ResponseNotFound())
+		fmt.Println("test ")
+		app.ResError(c, errors.ErrNotFound)
 	}
 }
 

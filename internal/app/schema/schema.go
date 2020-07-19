@@ -7,7 +7,6 @@ func (t StatusText) String() string {
 	return string(t)
 }
 
-
 const (
 	OKStatus    StatusText = "OK"
 	ErrorStatus StatusText = "ERROR"
@@ -18,8 +17,6 @@ const (
 type StatusResult struct {
 	Status StatusText `json:"status"`
 }
-
-
 
 // ErrorItem
 type ErrorResult struct {
@@ -72,7 +69,6 @@ const (
 	OrderByDESC OrderDirection = 2
 )
 
-
 func NewOrderFieldWithKeys(keys []string, directions ...map[int]OrderDirection) []*OrderField {
 	m := make(map[int]OrderDirection)
 	if len(directions) > 0 {
@@ -97,7 +93,7 @@ func NewOrderFields(orderFields ...*OrderField) []*OrderField {
 	return orderFields
 }
 
-// NewOrderField 创建排序字段
+// New Order Field
 func NewOrderField(key string, d OrderDirection) *OrderField {
 	return &OrderField{
 		Key:       key,
@@ -105,7 +101,7 @@ func NewOrderField(key string, d OrderDirection) *OrderField {
 	}
 }
 
-// OrderField 排序字段
+// Order Field
 type OrderField struct {
 	Key       string
 	Direction OrderDirection
@@ -118,7 +114,7 @@ func NewIDResult(id string) *IDResult {
 	}
 }
 
-// IDResult 响应唯一标识
+// IDResult
 type IDResult struct {
 	ID string `json:"id"`
 }

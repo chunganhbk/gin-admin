@@ -18,6 +18,7 @@ require (
 	github.com/koding/multiconfig v0.0.0-20171124222453-69c27309b2d7
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.6.0
+	github.com/stretchr/testify v1.6.1 // indirect
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/urfave/cli/v2 v2.2.0 // indirect
 	go.mongodb.org/mongo-driver v1.3.5

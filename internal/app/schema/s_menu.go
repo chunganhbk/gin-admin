@@ -1,16 +1,16 @@
 package schema
 
 import (
+	"github.com/chunganhbk/gin-go/pkg/util"
 	"strings"
 	"time"
-	"github.com/chunganhbk/gin-go/pkg/util"
 )
 
 // Menu
 type Menu struct {
 	ID         string      `json:"id"`
 	Name       string      `json:"name" binding:"required"`
-	Order   int            `json:"order"`
+	Order      int         `json:"order"`
 	Icon       string      `json:"icon"`
 	Router     string      `json:"router"`
 	ParentID   string      `json:"parent_id"`
@@ -40,18 +40,18 @@ type MenuQueryParam struct {
 	Status           int      `form:"status"`
 }
 
-// MenuQueryOptions 查询可选参数项
+// Menu Query Options
 type MenuQueryOptions struct {
-	OrderFields []*OrderField // 排序字段
+	OrderFields []*OrderField
 }
 
-// MenuQueryResult 查询结果
+// MenuQueryResult
 type MenuQueryResult struct {
 	Data       Menus
 	PageResult *PaginationResult
 }
 
-// Menus 菜单列表
+// Menus
 type Menus []*Menu
 
 func (a Menus) Len() int {
@@ -97,7 +97,7 @@ func (a Menus) SplitParentIDs() []string {
 	return idList
 }
 
-// ToTree 转换为菜单树
+// ToTree
 func (a Menus) ToTree() MenuTrees {
 	list := make(MenuTrees, len(a))
 	for i, item := range a {
@@ -108,7 +108,7 @@ func (a Menus) ToTree() MenuTrees {
 			Router:     item.Router,
 			ParentID:   item.ParentID,
 			ParentPath: item.ParentPath,
-			Order:   item.Order,
+			Order:      item.Order,
 			ShowStatus: item.ShowStatus,
 			Status:     item.Status,
 			Actions:    item.Actions,
@@ -117,7 +117,7 @@ func (a Menus) ToTree() MenuTrees {
 	return list.ToTree()
 }
 
-// FillMenuAction 填充菜单动作列表
+// Fill Menu Action
 func (a Menus) FillMenuAction(mActions map[string]MenuActions) Menus {
 	for _, item := range a {
 		if v, ok := mActions[item.ID]; ok {
@@ -129,7 +129,7 @@ func (a Menus) FillMenuAction(mActions map[string]MenuActions) Menus {
 
 // ----------------------------------------MenuTree--------------------------------------
 
-// MenuTree
+// Menu Tree
 type MenuTree struct {
 	ID         string      `yaml:"-" json:"id"`
 	Name       string      `yaml:"name" json:"name"`

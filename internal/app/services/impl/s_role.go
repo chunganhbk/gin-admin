@@ -4,27 +4,26 @@ import (
 	"context"
 	"github.com/chunganhbk/gin-go/internal/app/iutil"
 	"github.com/chunganhbk/gin-go/internal/app/repositories"
-	"github.com/chunganhbk/gin-go/pkg/app"
+	"github.com/chunganhbk/gin-go/pkg/errors"
 
-	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/casbin/casbin/v2"
-
+	"github.com/chunganhbk/gin-go/internal/app/schema"
 )
-
-
 
 // Role service
 type RoleService struct {
-	Enforcer      *casbin.SyncedEnforcer
+	Enforcer   *casbin.SyncedEnforcer
 	TransRp    repositories.ITrans
 	RoleRp     repositories.IRole
 	RoleMenuRp repositories.IRoleMenu
 	UserRp     repositories.IUser
 }
-func NewRoleService (enforcer *casbin.SyncedEnforcer, transRp repositories.ITrans,
-	roleRp repositories.IRole, roleMenuRp repositories.IRoleMenu, userRp repositories.IUser) *RoleService{
-	return &RoleService{enforcer, transRp,roleRp, roleMenuRp, userRp}
+
+func NewRoleService(enforcer *casbin.SyncedEnforcer, transRp repositories.ITrans,
+	roleRp repositories.IRole, roleMenuRp repositories.IRoleMenu, userRp repositories.IUser) *RoleService {
+	return &RoleService{enforcer, transRp, roleRp, roleMenuRp, userRp}
 }
+
 // Query role
 func (r *RoleService) Query(ctx context.Context, params schema.RoleQueryParam, opts ...schema.RoleQueryOptions) (*schema.RoleQueryResult, error) {
 	return r.RoleRp.Query(ctx, params, opts...)
@@ -36,7 +35,7 @@ func (r *RoleService) Get(ctx context.Context, id string, opts ...schema.RoleQue
 	if err != nil {
 		return nil, err
 	} else if item == nil {
-		return nil, app.ResponseNotFound()
+		return nil, errors.ErrNotFound
 	}
 
 	roleMenus, err := r.QueryRoleMenus(ctx, id)
@@ -93,7 +92,7 @@ func (r *RoleService) checkName(ctx context.Context, item schema.Role) error {
 	if err != nil {
 		return err
 	} else if result.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_EXIST_ROLE, nil)
+		return errors.New400Response(errors.ERROR_EXIST_ROLE)
 	}
 	return nil
 }
@@ -104,7 +103,7 @@ func (r *RoleService) Update(ctx context.Context, id string, item schema.Role) e
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return app.ResponseNotFound()
+		return errors.ErrNotFound
 	} else if oldItem.Name != item.Name {
 		err := r.checkName(ctx, item)
 		if err != nil {
@@ -166,7 +165,7 @@ func (r *RoleService) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return app.ResponseNotFound()
+		return errors.ErrNotFound
 	}
 
 	userResult, err := r.UserRp.Query(ctx, schema.UserQueryParam{
@@ -176,7 +175,7 @@ func (r *RoleService) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	} else if userResult.PageResult.Total > 0 {
-		return app.New400Response(app.ERROR_EXIST_ROLE_USER, nil)
+		return errors.New400Response(errors.ERROR_EXIST_ROLE_USER)
 	}
 
 	err = ExecTrans(ctx, r.TransRp, func(ctx context.Context) error {
@@ -201,7 +200,7 @@ func (r *RoleService) UpdateStatus(ctx context.Context, id string, status int) e
 	if err != nil {
 		return err
 	} else if oldItem == nil {
-		return app.ResponseNotFound()
+		return errors.ErrNotFound
 	}
 
 	err = r.RoleRp.UpdateStatus(ctx, id, status)

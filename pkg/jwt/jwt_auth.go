@@ -1,18 +1,16 @@
 package jwt
 
 import (
+	"github.com/chunganhbk/gin-go/pkg/errors"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/pkg/errors"
 	"time"
 )
+
 type IJWTAuth interface {
 	GenerateToken(userID string) (TokenInfo, error)
-	ParseUserID( accessToken string) (string, error)
+	ParseUserID(accessToken string) (string, error)
 }
 
-var (
-	ErrInvalidToken = errors.New("invalid token")
-)
 const defaultKey = "gin-go"
 
 var defaultOptions = options{
@@ -22,23 +20,24 @@ var defaultOptions = options{
 	signingKey:    []byte(defaultKey),
 	keyfunc: func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, ErrInvalidToken
+			return nil, errors.ErrTokenInvalid
 		}
 		return []byte(defaultKey), nil
 	},
 }
-func NewJWTAuth( opts ...Option) *JWTAuth {
+
+func NewJWTAuth(opts ...Option) *JWTAuth {
 	o := defaultOptions
 	for _, opt := range opts {
 		opt(&o)
 	}
 	return &JWTAuth{
-		opts:  &defaultOptions,
+		opts: &defaultOptions,
 	}
 }
 
 type JWTAuth struct {
-	opts  *options
+	opts *options
 }
 type options struct {
 	signingMethod jwt.SigningMethod
@@ -48,6 +47,7 @@ type options struct {
 	tokenType     string
 }
 type Option func(*options)
+
 func SetExpired(expired int) Option {
 	return func(o *options) {
 		o.expired = expired
@@ -59,7 +59,7 @@ func SetSigningKey(key interface{}) Option {
 	}
 }
 
-func (jwtAuth *JWTAuth) GenerateToken( userID string) (TokenInfo, error) {
+func (jwtAuth *JWTAuth) GenerateToken(userID string) (TokenInfo, error) {
 	now := time.Now()
 	expiresAt := now.Add(time.Duration(jwtAuth.opts.expired) * time.Second).Unix()
 
@@ -85,14 +85,25 @@ func (jwtAuth *JWTAuth) GenerateToken( userID string) (TokenInfo, error) {
 func (a *JWTAuth) parseToken(tokenString string) (*jwt.StandardClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, a.opts.keyfunc)
 	if err != nil {
-		return nil, err
+		if ve, ok := err.(*jwt.ValidationError); ok {
+			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
+				return nil, errors.ErrTokenMalforaled
+			} else if ve.Errors&jwt.ValidationErrorExpired != 0 {
+				// Token is expired
+				return nil, errors.ErrTokenExpired
+			} else if ve.Errors&jwt.ValidationErrorNotValidYet != 0 {
+				return nil, errors.ErrTokenInvalid
+			} else {
+				return nil, errors.ErrTokenInvalid
+			}
+		}
 	} else if !token.Valid {
-		return nil, ErrInvalidToken
+		return nil, errors.ErrTokenInvalid
 	}
 
 	return token.Claims.(*jwt.StandardClaims), nil
 }
-func (jwt *JWTAuth) ParseUserID( tokenString string) (string, error) {
+func (jwt *JWTAuth) ParseUserID(tokenString string) (string, error) {
 	claims, err := jwt.parseToken(tokenString)
 	if err != nil {
 		return "", err

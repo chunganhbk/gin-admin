@@ -2,10 +2,9 @@ package impl
 
 import (
 	"context"
-
+	"github.com/casbin/casbin/v2"
 	"github.com/chunganhbk/gin-go/internal/app/config"
 	"github.com/chunganhbk/gin-go/pkg/logger"
-	"github.com/casbin/casbin/v2"
 )
 
 var chCasbinPolicy chan *chCasbinPolicyItem

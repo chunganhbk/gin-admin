@@ -8,6 +8,7 @@ import (
 
 // IUserService
 type IUserService interface {
+	InitData(ctx context.Context) error
 
 	GetLoginInfo(ctx context.Context, userID string) (*schema.UserLoginInfo, error)
 
@@ -20,6 +21,8 @@ type IUserService interface {
 	Get(ctx context.Context, id string, opts ...schema.UserQueryOptions) (*schema.User, error)
 
 	Create(ctx context.Context, item schema.User) (*schema.IDResult, error)
+
+	Register(ctx context.Context, item schema.RegisterUser) (*schema.IDResult, error)
 
 	Update(ctx context.Context, id string, item schema.User) error
 

@@ -9,8 +9,10 @@ import (
 
 func InitData(ctx context.Context, container *dig.Container) error {
 	if c := config.C.Menu; c.Enable && c.Data != "" {
-		return container.Invoke(func( menu services.IMenuService) error {
-			return menu.InitData(ctx, c.Data)
+		return container.Invoke(func(menu services.IMenuService, user services.IUserService) error {
+			_ = menu.InitData(ctx, c.Data)
+			_ = user.InitData(ctx)
+			return nil
 		})
 	}
 	return nil

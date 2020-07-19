@@ -7,10 +7,7 @@ import (
 
 // ILogin
 type IAuthService interface {
-
-
-	Verify(ctx context.Context, userName, password string) (*schema.User, error)
+	Verify(ctx context.Context, Email string, password string) (*schema.User, error)
 
 	GenerateToken(userID string) (*schema.LoginTokenInfo, error)
-
 }

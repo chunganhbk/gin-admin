@@ -18,11 +18,9 @@ func (a *Auth) Login(c *gin.Context) {
 // @Tags Auth
 // @Summary User register
 // @Param body body schema.LoginParam true "Request parameters"
-// @Success 200 {object} schema.LoginTokenInfo
+// @Success 200 {object} schema.User
 // @Failure 400 {object} schema.ErrorResult "{code:401, message:Invalid request parameter}"
 // @Failure 500 {object} schema.ErrorResult "{code:500, message: Server Error}"
 // @Router /api/v1/auth/register [post]
 func (a *Auth) Register(c *gin.Context) {
 }
-
-
