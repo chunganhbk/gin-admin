@@ -12,6 +12,7 @@ import (
 type User struct {
 	DB *gorm.DB
 }
+
 func NewUser(db *gorm.DB) *User {
 	return &User{db}
 }
@@ -45,7 +46,7 @@ func (a *User) Query(ctx context.Context, params schema.UserQueryParam, opts ...
 	}
 	if v := params.QueryValue; v != "" {
 		v = "%" + v + "%"
-		db = db.Where("user_name LIKE ? OR real_name LIKE ? OR phone LIKE ? OR email LIKE ?", v, v, v, v)
+		db = db.Where("full_name LIKE ? OR phone LIKE ? OR email LIKE ?", v, v, v)
 	}
 
 	opt.OrderFields = append(opt.OrderFields, schema.NewOrderField("id", schema.OrderByDESC))

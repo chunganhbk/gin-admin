@@ -26,15 +26,13 @@ func (a SchemaUser) ToUser() *User {
 type User struct {
 	Model
 	UserName string  `gorm:"column:user_name;size:64;index;default:'';not null;"`
-	FullName string  `gorm:"column:real_name;size:64;index;default:'';not null;"`
+	FullName string  `gorm:"column:full_name;size:64;index;default:'';not null;"`
 	Password string  `gorm:"column:password;size:40;default:'';not null;"`
 	Email    *string `gorm:"column:email;size:255;index;"`
 	Phone    *string `gorm:"column:phone;size:20;index;"`
 	Status   int     `gorm:"column:status;index;default:0;not null;"`
 	Creator  string  `gorm:"column:creator;size:36;"`
 }
-
-
 
 // ToSchemaUser
 func (a User) ToSchemaUser() *schema.User {
