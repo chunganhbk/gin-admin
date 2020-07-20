@@ -19,14 +19,17 @@ RBAC scaffolding based on Gin + Gorm/MongoDB + Casbin + Dig
 │       └── test          # Test Cases
 └── pkg                   # Common Packages
     ├── app               # Extend Gin
+    ├── errors            # Define message, code errors
     ├── jwt               # JWT Auth
     ├── logger            # Logers
     └── utils             # Utilities
 ```
 ## Start project
 ```bash
-make start 
-go run cmd/server/main.go web -c ./configs/config.toml -m ./configs/model.conf --menu ./configs/menu.yaml
+# start make file
+    make start 
+# OR run with go command
+    go run cmd/server/main.go web -c ./configs/config.toml -m ./configs/model.conf --menu ./configs/menu.yaml
 ```
 
 
