@@ -2,7 +2,6 @@ package gorm
 
 import (
 	"context"
-	"fmt"
 	entity "github.com/chunganhbk/gin-go/internal/app/models/gorm"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
 	"github.com/jinzhu/gorm"
@@ -54,7 +53,6 @@ func (a *Menu) Query(ctx context.Context, params schema.MenuQueryParam, opts ...
 	}
 
 	opt.OrderFields = append(opt.OrderFields, schema.NewOrderField("id", schema.OrderByDESC))
-	fmt.Sprintf("opt, %s", opt.OrderFields)
 	db = db.Order(ParseOrder(opt.OrderFields))
 
 	var list entity.Menus
