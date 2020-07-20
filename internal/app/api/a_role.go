@@ -1,20 +1,20 @@
 package api
 
 import (
-	"github.com/chunganhbk/gin-go/internal/app/services"
 	"github.com/chunganhbk/gin-go/internal/app/schema"
+	"github.com/chunganhbk/gin-go/internal/app/services"
 	"github.com/chunganhbk/gin-go/pkg/app"
 	"github.com/gin-gonic/gin"
-
 )
-
 
 type Role struct {
 	RoleService services.IRoleService
 }
-func NewRole(roleService services.IRoleService) *Role{
+
+func NewRole(roleService services.IRoleService) *Role {
 	return &Role{RoleService: roleService}
 }
+
 // Query menu
 func (r *Role) Query(c *gin.Context) {
 	ctx := c.Request.Context()
@@ -26,7 +26,7 @@ func (r *Role) Query(c *gin.Context) {
 
 	params.Pagination = true
 	result, err := r.RoleService.Query(ctx, params, schema.RoleQueryOptions{
-		OrderFields: schema.NewOrderFields(schema.NewOrderField("sequence", schema.OrderByDESC)),
+		OrderFields: schema.NewOrderFields(schema.NewOrderField("order_number", schema.OrderByDESC)),
 	})
 	if err != nil {
 		app.ResError(c, err)
@@ -45,7 +45,7 @@ func (r *Role) QuerySelect(c *gin.Context) {
 	}
 
 	result, err := r.RoleService.Query(ctx, params, schema.RoleQueryOptions{
-		OrderFields: schema.NewOrderFields(schema.NewOrderField("order", schema.OrderByDESC)),
+		OrderFields: schema.NewOrderFields(schema.NewOrderField("order_number", schema.OrderByDESC)),
 	})
 	if err != nil {
 		app.ResError(c, err)
