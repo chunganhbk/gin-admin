@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Config 配置参数
+// Config
 type Config struct {
 	URI        string
 	Database   string
@@ -26,7 +26,7 @@ func handleError(err error) {
 	}
 }
 
-// New 创建基于bson的钩子实例(需要指定表名)
+// New bson
 func New(cfg *Config) *Hook {
 	var (
 		ctx    = context.Background()
@@ -48,13 +48,13 @@ func New(cfg *Config) *Hook {
 	}
 }
 
-// Hook bson日志钩子
+// Hook bson
 type Hook struct {
 	Client     *mongo.Client
 	Collection *mongo.Collection
 }
 
-// Exec 执行日志写入
+// Exec
 func (h *Hook) Exec(entry *logrus.Entry) error {
 	item := &LogItem{
 		ID:        primitive.NewObjectID().Hex(),
@@ -93,21 +93,21 @@ func (h *Hook) Exec(entry *logrus.Entry) error {
 	return err
 }
 
-// Close 关闭钩子
+// Close
 func (h *Hook) Close() error {
 	return h.Client.Disconnect(context.Background())
 }
 
-// LogItem 存储日志项
+// LogItem
 type LogItem struct {
 	ID           string    `bson:"_id"`           // id
-	Level        string    `bson:"level"`         // 日志级别
-	Message      string    `bson:"message"`       // 消息
-	TraceID      string    `bson:"trace_id"`      // 跟踪ID
-	UserID       string    `bson:"user_id"`       // 用户ID
-	SpanTitle    string    `bson:"span_title"`    // 跟踪单元标题
-	SpanFunction string    `bson:"span_function"` // 跟踪单元函数名
-	Data         string    `bson:"data"`          // 日志数据(json)
-	Version      string    `bson:"version"`       // 服务版本号
-	CreatedAt    time.Time `bson:"created_at"`    // 创建时间
+	Level        string    `bson:"level"`
+	Message      string    `bson:"message"`
+	TraceID      string    `bson:"trace_id"`
+	UserID       string    `bson:"user_id"`
+	SpanTitle    string    `bson:"span_title"`
+	SpanFunction string    `bson:"span_function"`
+	Data         string    `bson:"data"`          //(json)
+	Version      string    `bson:"version"`
+	CreatedAt    time.Time `bson:"created_at"`
 }

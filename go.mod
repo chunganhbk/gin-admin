@@ -25,5 +25,6 @@ require (
 	go.uber.org/dig v1.10.0
 	golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899
 	golang.org/x/tools v0.0.0-20191030062658-86caa796c7ab
+	google.golang.org/grpc v1.30.0 // indirect
 	gopkg.in/yaml.v2 v2.2.8
 )

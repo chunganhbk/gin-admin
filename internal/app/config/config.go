@@ -58,6 +58,7 @@ func PrintWithJSON() {
 type Config struct {
 	RunMode      string
 	WWW          string
+	Version      string
 	Swagger      bool
 	PrintConfig  bool
 	Store        string
@@ -65,6 +66,7 @@ type Config struct {
 	Menu         Menu
 	Casbin       Casbin
 	Log          Log
+	GrpcServer   GrpcServer
 	LogGormHook  LogGormHook
 	LogMongoHook LogMongoHook
 	JWTAuth      JWTAuth
@@ -84,7 +86,11 @@ type Config struct {
 		}
 	}
 }
+type GrpcServer struct {
+	Enable bool
+	Port int
 
+}
 // IsDebugMode
 func (c *Config) IsDebugMode() bool {
 	return c.RunMode == "debug"

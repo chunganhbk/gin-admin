@@ -11,7 +11,7 @@ import (
 
 var tableName string
 
-// Config 配置参数
+// Config
 type Config struct {
 	DBType       string
 	DSN          string
@@ -21,7 +21,7 @@ type Config struct {
 	TableName    string
 }
 
-// New 创建基于gorm的钩子实例(需要指定表名)
+// New gorm
 func New(c *Config) *Hook {
 	tableName = c.TableName
 
@@ -40,12 +40,12 @@ func New(c *Config) *Hook {
 	}
 }
 
-// Hook gorm日志钩子
+// Hook gorm
 type Hook struct {
 	db *gorm.DB
 }
 
-// Exec 执行日志写入
+// Exec
 func (h *Hook) Exec(entry *logrus.Entry) error {
 	item := &LogItem{
 		Level:     entry.Level.String(),
@@ -86,26 +86,26 @@ func (h *Hook) Exec(entry *logrus.Entry) error {
 	return nil
 }
 
-// Close 关闭钩子
+// Close
 func (h *Hook) Close() error {
 	return h.db.Close()
 }
 
-// LogItem 存储日志项
+// LogItem
 type LogItem struct {
 	ID           uint      `gorm:"column:id;primary_key;auto_increment;"` // id
-	Level        string    `gorm:"column:level;size:20;index;"`           // 日志级别
-	Message      string    `gorm:"column:message;size:1024;"`             // 消息
-	TraceID      string    `gorm:"column:trace_id;size:128;index;"`       // 跟踪ID
-	UserID       string    `gorm:"column:user_id;size:36;index;"`         // 用户ID
-	SpanTitle    string    `gorm:"column:span_title;size:256;"`           // 跟踪单元标题
-	SpanFunction string    `gorm:"column:span_function;size:256;"`        // 跟踪单元函数名
-	Data         string    `gorm:"column:data;type:text;"`                // 日志数据(json)
-	Version      string    `gorm:"column:version;index;size:32;"`         // 服务版本号
-	CreatedAt    time.Time `gorm:"column:created_at;index"`               // 创建时间
+	Level        string    `gorm:"column:level;size:20;index;"`
+	Message      string    `gorm:"column:message;size:1024;"`
+	TraceID      string    `gorm:"column:trace_id;size:128;index;"`
+	UserID       string    `gorm:"column:user_id;size:36;index;"`
+	SpanTitle    string    `gorm:"column:span_title;size:256;"`
+	SpanFunction string    `gorm:"column:span_function;size:256;"`
+	Data         string    `gorm:"column:data;type:text;"`                // (json)
+	Version      string    `gorm:"column:version;index;size:32;"`
+	CreatedAt    time.Time `gorm:"column:created_at;index"`
 }
 
-// TableName 表名
+// TableName
 func (LogItem) TableName() string {
 	return tableName
 }

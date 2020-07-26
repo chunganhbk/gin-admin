@@ -27,7 +27,7 @@ type ErrorResult struct {
 type ResponseResult struct {
 	ErrorResult
 	Data interface{} `json:"data"`
-	ERR  interface{} `json:"err"`
+	ERR  interface{} `json:"err, omitempty"`
 }
 
 // ListResult

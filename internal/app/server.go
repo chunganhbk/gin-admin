@@ -9,10 +9,6 @@ import (
 	"github.com/chunganhbk/gin-go/pkg/logger"
 	"go.uber.org/dig"
 	"net/http"
-	"os"
-	"os/signal"
-	"sync/atomic"
-	"syscall"
 	"time"
 )
 
@@ -52,35 +48,3 @@ func InitHTTPServer(ctx context.Context,  container *dig.Container) func() {
 		}
 	}
 }
-
-// Run server
-func Run(ctx context.Context, opts ...Option) error {
-	var state int32 = 1
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-	cleanFunc, err := Init(ctx, opts...)
-	if err != nil {
-		return err
-	}
-
-EXIT:
-	for {
-		sig := <-sc
-		logger.Printf(ctx, "Received a signal[%s]", sig.String())
-		switch sig {
-		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
-			atomic.CompareAndSwapInt32(&state, 1, 0)
-			break EXIT
-		case syscall.SIGHUP:
-		default:
-			break EXIT
-		}
-	}
-
-	cleanFunc()
-	logger.Printf(ctx, "Service exit")
-	time.Sleep(time.Second)
-	os.Exit(int(atomic.LoadInt32(&state)))
-	return nil
-}
-// Init GinEngine

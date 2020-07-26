@@ -10,7 +10,7 @@ import (
 )
 
 // VERSION：go build -ldflags "-X main.VERSION=x.x.x"
-var VERSION = "1.0.1"
+var VERSION = "1.1.0"
 
 func main() {
 	logger.SetVersion(VERSION)

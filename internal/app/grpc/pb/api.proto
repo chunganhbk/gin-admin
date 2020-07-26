@@ -1,0 +1,19 @@
+syntax = "proto3";
+package pb;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+message SimpleMessage {
+    string value = 1;
+}
+
+
+service SpacemeshService {
+    rpc Echo (SimpleMessage) returns (SimpleMessage) {
+        option (google.api.http) = {
+          post: "/v1/example/echo"
+          body: "*"
+        };
+    }
+}

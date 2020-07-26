@@ -9,6 +9,10 @@ import (
 	"github.com/chunganhbk/gin-go/pkg/logger"
 	"go.uber.org/dig"
 	"os"
+	"os/signal"
+	"sync/atomic"
+	"syscall"
+	"time"
 )
 
 type options struct {
@@ -56,7 +60,36 @@ func SetVersion(s string) Option {
 		o.Version = s
 	}
 }
+// Run server
+func Run(ctx context.Context, opts ...Option) error {
+	var state int32 = 1
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	cleanFunc, err := Init(ctx, opts...)
+	if err != nil {
+		return err
+	}
 
+	EXIT:
+		for {
+			sig := <-sc
+			logger.Printf(ctx, "Received a signal[%s]", sig.String())
+			switch sig {
+			case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
+				atomic.CompareAndSwapInt32(&state, 1, 0)
+				break EXIT
+			case syscall.SIGHUP:
+			default:
+				break EXIT
+			}
+		}
+
+		cleanFunc()
+		logger.Printf(ctx, "Service exit")
+		time.Sleep(time.Second)
+		os.Exit(int(atomic.LoadInt32(&state)))
+		return nil
+}
 // Init
 func Init(ctx context.Context, opts ...Option) (func(), error) {
 	var o options
@@ -134,6 +167,7 @@ func BuildContainer() (*dig.Container, func()) {
 		}
 	}
 }
+
 func handleError(err error) {
 	if err != nil {
 		panic(err)

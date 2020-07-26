@@ -37,18 +37,18 @@ func init() {
 	}
 }
 
-// Logger 定义日志别名
+// Logger
 type Logger = logrus.Logger
 
 // Hook 定义日志钩子别名
 type Hook = logrus.Hook
 
-// StandardLogger 获取标准日志
+// StandardLogger
 func StandardLogger() *Logger {
 	return logrus.StandardLogger()
 }
 
-// SetLevel 设定日志级别
+// SetLevel
 func SetLevel(level int) {
 	logrus.SetLevel(logrus.Level(level))
 }
@@ -88,12 +88,12 @@ type (
 	userIDKey  struct{}
 )
 
-// NewTraceIDContext 创建跟踪ID上下文
+// NewTraceIDContext
 func NewTraceIDContext(ctx context.Context, traceID string) context.Context {
 	return context.WithValue(ctx, traceIDKey{}, traceID)
 }
 
-// FromTraceIDContext 从上下文中获取跟踪ID
+// FromTraceIDContext
 func FromTraceIDContext(ctx context.Context) string {
 	v := ctx.Value(traceIDKey{})
 	if v != nil {
@@ -104,12 +104,12 @@ func FromTraceIDContext(ctx context.Context) string {
 	return traceIDFunc()
 }
 
-// NewUserIDContext 创建用户ID上下文
+// NewUserIDContext
 func NewUserIDContext(ctx context.Context, userID string) context.Context {
 	return context.WithValue(ctx, userIDKey{}, userID)
 }
 
-// FromUserIDContext 从上下文中获取用户ID
+// FromUserIDContext
 func FromUserIDContext(ctx context.Context) string {
 	v := ctx.Value(userIDKey{})
 	if v != nil {
@@ -125,24 +125,24 @@ type spanOptions struct {
 	FuncName string
 }
 
-// SpanOption 定义跟踪单元的数据项
+// SpanOption
 type SpanOption func(*spanOptions)
 
-// SetSpanTitle 设置跟踪单元的标题
+// SetSpanTitle
 func SetSpanTitle(title string) SpanOption {
 	return func(o *spanOptions) {
 		o.Title = title
 	}
 }
 
-// SetSpanFuncName 设置跟踪单元的函数名
+// SetSpanFuncName
 func SetSpanFuncName(funcName string) SpanOption {
 	return func(o *spanOptions) {
 		o.FuncName = funcName
 	}
 }
 
-// StartSpan 开始一个追踪单元
+// StartSpan
 func StartSpan(ctx context.Context, opts ...SpanOption) *Entry {
 	if ctx == nil {
 		ctx = context.Background()
@@ -172,37 +172,37 @@ func StartSpan(ctx context.Context, opts ...SpanOption) *Entry {
 	return newEntry(logrus.WithFields(fields))
 }
 
-// Debugf 写入调试日志
+// Debugf
 func Debugf(ctx context.Context, format string, args ...interface{}) {
 	StartSpan(ctx).Debugf(format, args...)
 }
 
-// Infof 写入消息日志
+// Infof
 func Infof(ctx context.Context, format string, args ...interface{}) {
 	StartSpan(ctx).Infof(format, args...)
 }
 
-// Printf 写入消息日志
+// Printf
 func Printf(ctx context.Context, format string, args ...interface{}) {
 	StartSpan(ctx).Printf(format, args...)
 }
 
-// Warnf 写入警告日志
+// Warnf
 func Warnf(ctx context.Context, format string, args ...interface{}) {
 	StartSpan(ctx).Warnf(format, args...)
 }
 
-// Errorf 写入错误日志
+// Errorf
 func Errorf(ctx context.Context, format string, args ...interface{}) {
 	StartSpan(ctx).Errorf(format, args...)
 }
 
-// Fatalf 写入重大错误日志
+// Fatalf
 func Fatalf(ctx context.Context, format string, args ...interface{}) {
 	StartSpan(ctx).Fatalf(format, args...)
 }
 
-// ErrorStack 输出错误栈
+// ErrorStack
 func ErrorStack(ctx context.Context, err error) {
 	StartSpan(ctx).WithField(StackKey, fmt.Sprintf("%+v", err)).Errorf(err.Error())
 }
@@ -211,7 +211,7 @@ func newEntry(entry *logrus.Entry) *Entry {
 	return &Entry{entry: entry}
 }
 
-// Entry 定义统一的日志写入方式
+// Entry
 type Entry struct {
 	entry *logrus.Entry
 }
@@ -225,7 +225,7 @@ func (e *Entry) checkAndDelete(fields map[string]interface{}, keys ...string) {
 	}
 }
 
-// WithFields 结构化字段写入
+// WithFields
 func (e *Entry) WithFields(fields map[string]interface{}) *Entry {
 	e.checkAndDelete(fields,
 		TraceIDKey,
@@ -235,37 +235,37 @@ func (e *Entry) WithFields(fields map[string]interface{}) *Entry {
 	return newEntry(e.entry.WithFields(fields))
 }
 
-// WithField 结构化字段写入
+// WithField
 func (e *Entry) WithField(key string, value interface{}) *Entry {
 	return e.WithFields(map[string]interface{}{key: value})
 }
 
-// Fatalf 重大错误日志
+// Fatalf
 func (e *Entry) Fatalf(format string, args ...interface{}) {
 	e.entry.Fatalf(format, args...)
 }
 
-// Errorf 错误日志
+// Errorf
 func (e *Entry) Errorf(format string, args ...interface{}) {
 	e.entry.Errorf(format, args...)
 }
 
-// Warnf 警告日志
+// Warnf
 func (e *Entry) Warnf(format string, args ...interface{}) {
 	e.entry.Warnf(format, args...)
 }
 
-// Infof 消息日志
+// Infof
 func (e *Entry) Infof(format string, args ...interface{}) {
 	e.entry.Infof(format, args...)
 }
 
-// Printf 消息日志
+// Printf
 func (e *Entry) Printf(format string, args ...interface{}) {
 	e.entry.Printf(format, args...)
 }
 
-// Debugf 写入调试日志
+// Debugf
 func (e *Entry) Debugf(format string, args ...interface{}) {
 	e.entry.Debugf(format, args...)
 }
