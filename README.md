@@ -13,7 +13,7 @@ RBAC scaffolding based on Gin + Gorm/MongoDB + Casbin + Dig
 │       ├── middleware    # Gin's Middleware
 │       ├── models        # Model gorm mongodb
 │       ├── repositories  # Repository DB
-│       ├── schema        # Sechemas
+│       ├── schema        # Schemas
 │       ├── services      # Business Logic Layer
 │       │   └── impl      # BLL Implement
 │       └── test          # Test Cases
